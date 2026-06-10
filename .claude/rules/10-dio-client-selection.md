@@ -1,6 +1,6 @@
 # Dio Client Selection Rules
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/dio-clients.md](../../docs/claude-skill/tnds-flutter-app/references/dio-clients.md) — MUST read before wiring any new repository's Dio.
+> Full rules: [.claude/skills/tnds-flutter-app/references/dio-clients.md](../skills/tnds-flutter-app/references/dio-clients.md) — MUST read before wiring any new repository's Dio.
 
 Non-negotiables:
 

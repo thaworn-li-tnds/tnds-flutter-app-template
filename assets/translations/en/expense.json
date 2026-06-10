@@ -1,0 +1,36 @@
+{
+  "category": {
+    "entertainment": "Entertainment",
+    "food": "Food",
+    "other": "Other",
+    "shopping": "Shopping",
+    "transport": "Transport"
+  },
+  "create": {
+    "amount_invalid": "Enter a valid amount",
+    "amount_label": "Amount (THB)",
+    "category_label": "Category",
+    "save_button": "Save expense",
+    "title": "New expense",
+    "title_label": "Title",
+    "title_required": "Enter a title"
+  },
+  "detail": {
+    "amount": "Amount",
+    "category": "Category",
+    "date": "Date",
+    "title": "Expense detail"
+  },
+  "error": {
+    "not_found_description": "The expense may have been deleted. Refresh and try again.",
+    "not_found_title": "Expense not found"
+  },
+  "filter_all": "All",
+  "home_entry_button": "Expense tracker sample",
+  "list": {
+    "add_button": "Add expense",
+    "empty": "No expenses yet",
+    "title": "Expenses",
+    "total": "Total spent"
+  }
+}

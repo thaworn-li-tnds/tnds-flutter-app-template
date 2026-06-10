@@ -1,0 +1,49 @@
+name: tnds_flutter_app
+description: "TNDS Flutter app template — foundation following the tnds-flutter-app standard."
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  go_router: ^16.1.0
+  dio: ^5.9.0
+  json_annotation: ^4.9.0
+  easy_localization: ^3.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.4.9
+  riverpod_generator: ^2.6.5
+  json_serializable: ^6.8.0
+  mocktail: ^1.0.4
+  # Test-only: easy_localization awaits SharedPreferences.getInstance() during
+  # ensureInitialized(); tests must seed it via setMockInitialValues.
+  shared_preferences: ^2.5.5
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/translations/th/
+    - assets/translations/en/
+
+scripts:
+  install: flutter pub get
+  gen:
+    build: dart run build_runner build --delete-conflicting-outputs
+    code: dart run build_runner watch --delete-conflicting-outputs
+    lang: dart run tool/gen_locale_keys.dart
+  analyze: flutter analyze
+  format: dart format .
+  fix: dart fix --apply
+  test: flutter test --fail-fast
+  cov: flutter test --coverage

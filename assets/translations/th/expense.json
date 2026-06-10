@@ -1,0 +1,36 @@
+{
+  "category": {
+    "entertainment": "บันเทิง",
+    "food": "อาหาร",
+    "other": "อื่น ๆ",
+    "shopping": "ช้อปปิ้ง",
+    "transport": "เดินทาง"
+  },
+  "create": {
+    "amount_invalid": "กรุณากรอกจำนวนเงินที่ถูกต้อง",
+    "amount_label": "จำนวนเงิน (บาท)",
+    "category_label": "หมวดหมู่",
+    "save_button": "บันทึกรายจ่าย",
+    "title": "เพิ่มรายจ่าย",
+    "title_label": "ชื่อรายการ",
+    "title_required": "กรุณากรอกชื่อรายการ"
+  },
+  "detail": {
+    "amount": "จำนวนเงิน",
+    "category": "หมวดหมู่",
+    "date": "วันที่",
+    "title": "รายละเอียดรายจ่าย"
+  },
+  "error": {
+    "not_found_description": "รายการนี้อาจถูกลบไปแล้ว กรุณารีเฟรชแล้วลองใหม่อีกครั้ง",
+    "not_found_title": "ไม่พบรายการรายจ่าย"
+  },
+  "filter_all": "ทั้งหมด",
+  "home_entry_button": "ตัวอย่างฟีเจอร์รายจ่าย",
+  "list": {
+    "add_button": "เพิ่มรายจ่าย",
+    "empty": "ยังไม่มีรายจ่าย",
+    "title": "รายจ่าย",
+    "total": "ยอดรวม"
+  }
+}

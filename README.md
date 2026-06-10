@@ -15,7 +15,7 @@ Foundation for new TNDS Flutter apps. Carries the team's coding standard, archit
 |---|---|
 | Flutter version | FVM (`.fvmrc`) |
 | State management | Riverpod + `riverpod_annotation` (codegen only) |
-| Router | `go_router` with enum + `MymoRouter` mixin |
+| Router | `go_router` with enum + `TndsRouter` mixin |
 | Serialization | `json_serializable` (no freezed) |
 | Localization | `easy_localization` with generated locale keys |
 | Scripts | RPS (`rps gen build`, `rps analyze`, `rps test`) |
@@ -45,7 +45,7 @@ Call chain: **Controller → Service → Repository**. Shared concerns in `lib/s
 
 ## Coding standard
 
-Full rules live in [`docs/claude-skill/tnds-flutter-app/`](docs/claude-skill/tnds-flutter-app/). Key non-negotiables:
+Full rules live in [`.claude/skills/tnds-flutter-app/`](.claude/skills/tnds-flutter-app/). Key non-negotiables:
 
 - Presentation never imports `data/` or reads a `*RepositoryProvider`.
 - `@riverpod` function providers that call repositories are forbidden.

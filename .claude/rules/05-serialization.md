@@ -1,6 +1,6 @@
 # JSON Serialization Rules
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/data-layer.md](../../docs/claude-skill/tnds-flutter-app/references/data-layer.md) — read before writing DTOs or repository mappings.
+> Full rules: [.claude/skills/tnds-flutter-app/references/data-layer.md](../skills/tnds-flutter-app/references/data-layer.md) — read before writing DTOs or repository mappings.
 
 Non-negotiables:
 

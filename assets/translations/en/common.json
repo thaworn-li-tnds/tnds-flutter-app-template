@@ -1,0 +1,7 @@
+{
+  "close": "Close",
+  "error": {
+    "title": "Something went wrong",
+    "description": "Please try again."
+  }
+}

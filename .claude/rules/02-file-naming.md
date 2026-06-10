@@ -1,6 +1,6 @@
 # File Naming Conventions
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/naming-conventions.md](../../docs/claude-skill/tnds-flutter-app/references/naming-conventions.md) — read before creating or renaming files/classes.
+> Full rules: [.claude/skills/tnds-flutter-app/references/naming-conventions.md](../skills/tnds-flutter-app/references/naming-conventions.md) — read before creating or renaming files/classes.
 
 Non-negotiables:
 

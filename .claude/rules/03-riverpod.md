@@ -1,6 +1,6 @@
 # Riverpod Rules
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/riverpod-state.md](../../docs/claude-skill/tnds-flutter-app/references/riverpod-state.md) and [service-layer.md](../../docs/claude-skill/tnds-flutter-app/references/service-layer.md) — read before writing providers or controllers.
+> Full rules: [.claude/skills/tnds-flutter-app/references/riverpod-state.md](../skills/tnds-flutter-app/references/riverpod-state.md) and [service-layer.md](../skills/tnds-flutter-app/references/service-layer.md) — read before writing providers or controllers.
 
 Non-negotiables:
 
