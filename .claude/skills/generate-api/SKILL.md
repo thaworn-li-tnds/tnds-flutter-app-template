@@ -52,13 +52,13 @@ lib/src/features/{featureSnake}/application/{featureSnake}_service.dart
 lib/src/features/{featureSnake}/presentation/{operationSnake}_controller.dart
 ```
 
-(Layout per [architecture-layers.md](../../references/architecture-layers.md); follow the feature's existing sub-folders if it deviates.)
+(Layout per [architecture-layers.md](../tnds-flutter-app/references/architecture-layers.md); follow the feature's existing sub-folders if it deviates.)
 
 ## Step 2 – Domain Model
 
 Plain Dart class, no annotations, all fields have **default values** (never nullable), `const` constructor.
 
-**Domain purity rule:** Domain files must have zero imports from `flutter`, `riverpod`, `dio`, or any platform package. Pure Dart only. See [architecture-layers.md](../../references/architecture-layers.md).
+**Domain purity rule:** Domain files must have zero imports from `flutter`, `riverpod`, `dio`, or any platform package. Pure Dart only. See [architecture-layers.md](../tnds-flutter-app/references/architecture-layers.md).
 
 ## Step 3 – Request DTO
 
@@ -79,7 +79,7 @@ Skip entirely if request is `"none"`.
 the injected Dio client (`mymoMsDio` / `viperaDio` / `viperaAppSaltDio`) CANNOT be
 inferred from the spec — it is a crypto/session contract. You MUST ask the user to
 confirm the client via `AskUserQuestion` before wiring the provider. See
-[dio-clients.md](../../references/dio-clients.md). Do not copy whichever Dio a nearby
+[dio-clients.md](../tnds-flutter-app/references/dio-clients.md). Do not copy whichever Dio a nearby
 repo uses by default.
 
 Add method to existing `{FeaturePascal}Repository` class. Pattern:
@@ -98,7 +98,7 @@ Future<{OperationPascal}> {operationName}({OperationPascal}Request request) asyn
 ## Step 8 – Application Service (Service class — NEVER a function provider)
 
 Add a method to the feature's existing `{FeaturePascal}Service` class; if the feature
-has no Service class yet, create one per [service-layer.md](../../references/service-layer.md):
+has no Service class yet, create one per [service-layer.md](../tnds-flutter-app/references/service-layer.md):
 
 ```dart
 class {FeaturePascal}Service {
@@ -118,7 +118,7 @@ class {FeaturePascal}Service {
 
 FORBIDDEN: `@riverpod Future<T> {operationName}(Ref ref)` top-level function providers
 calling the repository — the legacy files that still contain them are listed in
-[MIGRATION.md](../../MIGRATION.md); never add new ones, even into those files.
+[MIGRATION.md](../tnds-flutter-app/MIGRATION.md); never add new ones, even into those files.
 
 ## Step 9 – Controller
 

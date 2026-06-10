@@ -1,6 +1,6 @@
 # Error Handling Rules
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/error-handling.md](../../docs/claude-skill/tnds-flutter-app/references/error-handling.md) — read before writing try/catch or error UI.
+> Full rules: [.claude/skills/tnds-flutter-app/references/error-handling.md](../skills/tnds-flutter-app/references/error-handling.md) — read before writing try/catch or error UI.
 
 Non-negotiables:
 

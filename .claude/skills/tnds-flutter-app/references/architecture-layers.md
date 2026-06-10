@@ -20,14 +20,14 @@ Every feature under `lib/src/features/<name>/`:
 
 ```
 <feature>/
-├── application/      # Services (*_service.dart), module controllers/launchers
+├── application/      # Services (*_service.dart), module launchers (*_module_launcher.dart) & module services
 ├── data/             # Repositories (*_repository.dart)
 │   ├── dto/
 │   │   ├── request/  # *_request.dart
 │   │   └── response/ # *_response.dart
 │   └── fake/         # fake_*_repository.dart (offline/test impls)
 ├── domain/           # Pure Dart models (nouns), launch params, results
-├── presentation/     # Screens (*_screen.dart), controllers (*_controller.dart), widgets/
+├── presentation/     # Screens (*_screen.dart), controllers (*_controller.dart incl. *_module_controller.dart), widgets/
 └── router/           # *_router.dart (enum with TndsRouter + GoRoute list)
 ```
 

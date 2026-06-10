@@ -1,6 +1,6 @@
 # Module Launcher Rules
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/module-launcher.md](../../docs/claude-skill/tnds-flutter-app/references/module-launcher.md) — read before touching any launchable module. Scaffold new modules with the bundled `add-module` skill.
+> Full rules: [.claude/skills/tnds-flutter-app/references/module-launcher.md](../skills/tnds-flutter-app/references/module-launcher.md) — read before touching any launchable module. Scaffold new modules with the bundled `add-module` skill.
 
 Non-negotiables:
 

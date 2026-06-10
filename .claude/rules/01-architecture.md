@@ -1,6 +1,6 @@
 # Architecture & Layer Isolation
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/architecture-layers.md](../../docs/claude-skill/tnds-flutter-app/references/architecture-layers.md) and [service-layer.md](../../docs/claude-skill/tnds-flutter-app/references/service-layer.md) — read before placing files or wiring layers.
+> Full rules: [.claude/skills/tnds-flutter-app/references/architecture-layers.md](../skills/tnds-flutter-app/references/architecture-layers.md) and [service-layer.md](../skills/tnds-flutter-app/references/service-layer.md) — read before placing files or wiring layers.
 
 Non-negotiables:
 

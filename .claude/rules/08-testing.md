@@ -1,6 +1,6 @@
 # Testing Rules
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/testing.md](../../docs/claude-skill/tnds-flutter-app/references/testing.md) — read before writing any test.
+> Full rules: [.claude/skills/tnds-flutter-app/references/testing.md](../skills/tnds-flutter-app/references/testing.md) — read before writing any test.
 
 Non-negotiables:
 

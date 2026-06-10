@@ -9,7 +9,7 @@ allowed-tools: Bash, Read, Edit
 
 # Skill: Review Uncommitted Code
 
-ตรวจ uncommitted changes ทั้งหมดเทียบกับ standard ใน [references/](../../references/) ของแพ็กเกจนี้
+ตรวจ uncommitted changes ทั้งหมดเทียบกับ standard ใน [references/](../tnds-flutter-app/references/) ของแพ็กเกจนี้
 
 ---
 
@@ -45,7 +45,7 @@ git diff HEAD -- <file>
 
 ตรวจแต่ละ rule ตามนี้ — **ตรวจเฉพาะบรรทัดที่เปลี่ยนแปลงหรือได้รับผลกระทบ**:
 
-### R1 · Layer Placement ([architecture-layers.md](../../references/architecture-layers.md))
+### R1 · Layer Placement ([architecture-layers.md](../tnds-flutter-app/references/architecture-layers.md))
 
 | ตรวจ | Violation เมื่อ |
 |---|---|
@@ -55,7 +55,7 @@ git diff HEAD -- <file>
 | Application layer ไม่ import Flutter widgets | พบ `import 'package:flutter/` ใน `application/` |
 | Presentation ไม่เรียก Dio โดยตรง | พบ `dio.get/post/put` ใน `*_screen.dart` หรือ widget |
 
-### R2 · Domain Purity ([architecture-layers.md](../../references/architecture-layers.md))
+### R2 · Domain Purity ([architecture-layers.md](../tnds-flutter-app/references/architecture-layers.md))
 
 ไฟล์ใน `lib/src/features/<feature>/domain/` หรือ `lib/src/shared/domain/`:
 
@@ -66,7 +66,7 @@ git diff HEAD -- <file>
 | ไม่มี Dio import | พบ `import 'package:dio/` |
 | ไม่ import package อื่นนอก Dart core | พบ import ที่ไม่ใช่ `dart:` หรือ domain model อื่น |
 
-### R3 · Cross-Feature Imports ([architecture-layers.md](../../references/architecture-layers.md))
+### R3 · Cross-Feature Imports ([architecture-layers.md](../tnds-flutter-app/references/architecture-layers.md))
 
 ไฟล์ใน `lib/src/features/<featureA>/`:
 
@@ -76,14 +76,14 @@ git diff HEAD -- <file>
 
 ยกเว้น: `lib/src/shared/` และ `lib/src/common_widgets/` อนุญาต
 
-### R4 · File Naming ([naming-conventions.md](../../references/naming-conventions.md))
+### R4 · File Naming ([naming-conventions.md](../tnds-flutter-app/references/naming-conventions.md))
 
 | ตรวจ | Violation เมื่อ |
 |---|---|
 | Suffix ถูกต้อง | ชื่อไฟล์ไม่ตรง pattern ตาม layer ที่อยู่ |
 | Controller ใน `presentation/` | `*_controller.dart` อยู่ใน `application/` |
 
-### R5 · Riverpod ([riverpod-state.md](../../references/riverpod-state.md))
+### R5 · Riverpod ([riverpod-state.md](../tnds-flutter-app/references/riverpod-state.md))
 
 | ตรวจ | Violation เมื่อ |
 |---|---|
@@ -93,14 +93,14 @@ git diff HEAD -- <file>
 | `ref.read` ใช้ใน callback | พบ `ref.read` ใน `build()` return value |
 | Async screen ใช้ `AsyncValue.when` | พบการ access `.value!` หรือ `.requireValue` โดยไม่มี guard |
 
-### R6 · Navigation ([navigation.md](../../references/navigation.md))
+### R6 · Navigation ([navigation.md](../tnds-flutter-app/references/navigation.md))
 
 | ตรวจ | Violation เมื่อ |
 |---|---|
 | ไม่ใช้ raw string path | พบ `context.go('/'`, `context.push('/'`, `router.go('/'` |
 | ใช้ enum-based navigation | พบ `goNamed` หรือ `pushNamed` ที่ส่ง raw string แทน `EnumName.value.name` |
 
-### R7 · Serialization ([data-layer.md](../../references/data-layer.md))
+### R7 · Serialization ([data-layer.md](../tnds-flutter-app/references/data-layer.md))
 
 | ตรวจ | Violation เมื่อ |
 |---|---|
@@ -108,14 +108,14 @@ git diff HEAD -- <file>
 | DTO มี `fromJson` และ `toJson` | class มี `@JsonSerializable` แต่ขาด factory `fromJson` หรือ method `toJson` |
 | Nested DTO ใช้ `explicitToJson` | class มี field เป็น object อื่นแต่ไม่มี `explicitToJson: true` |
 
-### R8 · Error Handling ([error-handling.md](../../references/error-handling.md))
+### R8 · Error Handling ([error-handling.md](../tnds-flutter-app/references/error-handling.md))
 
 | ตรวจ | Violation เมื่อ |
 |---|---|
 | ไม่มี `print()` | พบ `print(` ใน `lib/src/` |
 | ใช้ `AppException` | `throw Exception(` หรือ `throw Error(` ที่ไม่ใช่ AppException subclass |
 
-### R9 · Widget Conventions ([widgets-theming.md](../../references/widgets-theming.md))
+### R9 · Widget Conventions ([widgets-theming.md](../tnds-flutter-app/references/widgets-theming.md))
 
 | ตรวจ | Violation เมื่อ |
 |---|---|
@@ -123,7 +123,7 @@ git diff HEAD -- <file>
 | ไม่ใช้ SizedBox ใน ternary | พบ `? SizedBox()` หรือ `? const SizedBox()` เป็น empty fallback |
 | ใช้ `SizedBox` แทน `Container()` ว่าง | พบ `Container()` หรือ `Container(child: null)` เป็น spacer |
 
-### R10 · Testing ([testing.md](../../references/testing.md))
+### R10 · Testing ([testing.md](../tnds-flutter-app/references/testing.md))
 
 สำหรับไฟล์ใน `test/`:
 
@@ -134,7 +134,7 @@ git diff HEAD -- <file>
 | CachedNetworkImage มี sqflite-ffi setup | widget ที่ใช้ `CachedNetworkImage` แต่ไม่มี `sqfliteFfiInit()` ใน `setUp` |
 | ไม่มี `deleteDatabase` ใน `tearDown` | พบ `databaseFactory.deleteDatabase` ใน `tearDown` |
 
-### R11 · Service Layer ([service-layer.md](../../references/service-layer.md))
+### R11 · Service Layer ([service-layer.md](../tnds-flutter-app/references/service-layer.md))
 
 | ตรวจ | Violation เมื่อ |
 |---|---|
@@ -142,7 +142,7 @@ git diff HEAD -- <file>
 | ไม่มี function provider เรียก repo | พบ `@riverpod` top-level function ใน `application/` ที่ body เรียก `*RepositoryProvider` (ต้องเป็น method บน Service class) |
 | Controller เรียกผ่าน Service | mutation/load ใน controller เรียก `*ServiceProvider` ไม่ใช่ repo หรือ function provider |
 
-> ข้อยกเว้น: ไฟล์ legacy ที่อยู่ในรายการ [MIGRATION.md](../../MIGRATION.md) แล้ว — รายงานเป็น note ไม่ใช่ violation ใหม่ แต่**ห้ามเพิ่ม pattern เดิมลงไฟล์เหล่านั้นอีก**
+> ข้อยกเว้น: ไฟล์ legacy ที่อยู่ในรายการ [MIGRATION.md](../tnds-flutter-app/MIGRATION.md) แล้ว — รายงานเป็น note ไม่ใช่ violation ใหม่ แต่**ห้ามเพิ่ม pattern เดิมลงไฟล์เหล่านั้นอีก**
 
 ---
 
@@ -220,6 +220,6 @@ Severity:
 ## Notes
 
 - ตรวจเฉพาะ changed lines + context ที่จำเป็น ไม่ตรวจทั้ง file ที่ไม่เปลี่ยน
-- Rules เต็มอยู่ที่ [../../references/](../../references/) — อ่านเมื่อต้องการ detail เพิ่มเติม
+- Rules เต็มอยู่ที่ [../tnds-flutter-app/references/](../tnds-flutter-app/references/) — อ่านเมื่อต้องการ detail เพิ่มเติม
 - ไม่ suggest refactor นอก scope ของ changed files
 - ทุก violation ต้องระบุ `:line` ใน File column

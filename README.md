@@ -45,7 +45,7 @@ Call chain: **Controller → Service → Repository**. Shared concerns in `lib/s
 
 ## Coding standard
 
-Full rules live in [`docs/claude-skill/tnds-flutter-app/`](docs/claude-skill/tnds-flutter-app/). Key non-negotiables:
+Full rules live in [`.claude/skills/tnds-flutter-app/`](.claude/skills/tnds-flutter-app/). Key non-negotiables:
 
 - Presentation never imports `data/` or reads a `*RepositoryProvider`.
 - `@riverpod` function providers that call repositories are forbidden.

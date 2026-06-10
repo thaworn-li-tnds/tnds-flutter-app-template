@@ -86,17 +86,17 @@ Before writing code in any row below, output `Reading: <ref-name>` and read the 
 
 ## Companion Workflow Skills
 
-Step-by-step task templates bundled under [skills/](skills/) — each is a standalone skill that follows this package's standard (install into `.claude/skills/` or invoke by reading the file):
+Step-by-step task templates — each is a standalone skill living alongside this one under `.claude/skills/`, following this package's standard (invoke by name, or by reading the file):
 
 | Skill | Use when |
 |---|---|
-| [generate-api](skills/generate-api/SKILL.md) | Scaffolding a full API stack (domain → DTO → repo → fake → Service class → controller) from an operation name + JSON samples |
-| [add-module](skills/add-module/SKILL.md) | Scaffolding a complete `LaunchableModule` (controller, launcher, service, screens, router, registry) |
-| [add-locale-key](skills/add-locale-key/SKILL.md) | Adding translation keys to `th/` + `en/` JSON and regenerating `LocaleKeys` |
-| [fix-analysis](skills/fix-analysis/SKILL.md) | Driving `flutter analyze` to zero (auto-fix → classify → fix in dependency order) |
-| [commit-plan-from-diff](skills/commit-plan-from-diff/SKILL.md) | Splitting uncommitted changes into dependency-ordered commits |
-| [review-uncommitted](skills/review-uncommitted/SKILL.md) | Pre-commit review of changed lines against rules R1–R11 |
-| [codebase-alignment-review](skills/codebase-alignment-review/SKILL.md) | Reviewing files against nearby patterns + the 11 alignment checks |
+| [generate-api](../generate-api/SKILL.md) | Scaffolding a full API stack (domain → DTO → repo → fake → Service class → controller) from an operation name + JSON samples |
+| [add-module](../add-module/SKILL.md) | Scaffolding a complete `LaunchableModule` (controller, launcher, service, screens, router, registry) |
+| [add-locale-key](../add-locale-key/SKILL.md) | Adding translation keys to `th/` + `en/` JSON and regenerating `LocaleKeys` |
+| [fix-analysis](../fix-analysis/SKILL.md) | Driving `flutter analyze` to zero (auto-fix → classify → fix in dependency order) |
+| [commit-plan-from-diff](../commit-plan-from-diff/SKILL.md) | Splitting uncommitted changes into dependency-ordered commits |
+| [review-uncommitted](../review-uncommitted/SKILL.md) | Pre-commit review of changed lines against rules R1–R11 |
+| [codebase-alignment-review](../codebase-alignment-review/SKILL.md) | Reviewing files against nearby patterns + the 11 alignment checks |
 
 ## Adoption (installing into a project)
 
@@ -105,24 +105,18 @@ How content loads in Claude Code — and therefore why there are two install ste
 - **Skills** load only when invoked → step 1 makes them invocable.
 - **`.claude/rules/` and `CLAUDE.md`** load automatically every session → step 2 puts the critical rules there so they are never missed.
 
-### Step 1 — copy the package and symlink the skills
+### Step 1 — copy the skills into `.claude/skills/`
 
-Copy this whole folder into the target repo (any path works; `docs/claude-skill/` is the convention), then from the repo root:
+Copy `tnds-flutter-app/` (this folder — `SKILL.md`, `references/`, `MIGRATION.md`) and the 7 workflow-skill folders directly into the target repo's `.claude/skills/`, so each is a top-level skill Claude Code discovers:
 
-```sh
-cd .claude/skills
-
-# the standard itself
-ln -s ../../docs/claude-skill/tnds-flutter-app tnds-flutter-app
-
-# the 7 workflow skills
-for s in add-locale-key add-module generate-api fix-analysis \
-         commit-plan-from-diff codebase-alignment-review review-uncommitted; do
-  ln -s "../../docs/claude-skill/tnds-flutter-app/skills/$s" "$s"
-done
+```
+.claude/skills/
+├── tnds-flutter-app/   # the standard: SKILL.md + references/ + MIGRATION.md
+├── add-locale-key/  add-module/  generate-api/  fix-analysis/
+└── commit-plan-from-diff/  codebase-alignment-review/  review-uncommitted/
 ```
 
-Relative symlinks survive cloning, so this is a one-time, per-repo setup.
+These are real folders, not symlinks — `.claude/skills/` is self-contained and survives cloning with no extra setup.
 
 ### Step 2 — create slim pointer rules (auto-loaded guardrails)
 
@@ -131,7 +125,7 @@ For each topic, add a small file under `.claude/rules/` that contains ONLY a lin
 ```markdown
 # Navigation Rules
 
-> Full rules: docs/claude-skill/tnds-flutter-app/references/navigation.md
+> Full rules: .claude/skills/tnds-flutter-app/references/navigation.md
 
 Non-negotiables:
 - Enum-based navigation only: `context.goNamed(XRouter.y.name)` — never raw path strings.
@@ -157,7 +151,7 @@ graph LR
 ```
 lib/src/
 ├── features/<name>/
-│   ├── application/      # services, module launchers/controllers
+│   ├── application/      # services, module launchers & module services
 │   ├── data/             # repositories, dto/{request,response}/, fake/
 │   ├── domain/           # pure Dart nouns
 │   ├── presentation/     # screens, controllers, widgets

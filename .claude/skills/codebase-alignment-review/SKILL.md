@@ -23,7 +23,7 @@ Review code against **existing nearby patterns**, not ideal architecture.
 
 ## Step 2: Check (11 items)
 
-Read [../../references/](../../references/) for the full rule set before reviewing.
+Read [../tnds-flutter-app/references/](../tnds-flutter-app/references/) for the full rule set before reviewing.
 
 | # | Check | Pass when |
 |---|-------|-----------|
@@ -37,7 +37,7 @@ Read [../../references/](../../references/) for the full rule set before reviewi
 | 8 | **DTO and serialization** | `@JsonSerializable` with `fromJson`/`toJson`. No `freezed`. `explicitToJson: true` for nested DTOs. Errors are `AppException` subclasses. |
 | 9 | **Widget conventions** | Sub-widgets extracted as `StatelessWidget` subclasses, not `Widget _buildX()` methods. `if (cond) Widget()` not `cond ? Widget() : SizedBox()`. `SizedBox` over `Container()` for spacing. |
 | 10 | **No hardcoded sizes** | All sizing uses constants from `lib/src/constants/app_sizes.dart` (`Sizes.kP*`, `kGapH*`, `kGapW*`, `kRadius*`). Every violation gets its own row. |
-| 11 | **Service layer** | Every repository access goes through a Service class ([service-layer.md](../../references/service-layer.md)). No `ref.read(*RepositoryProvider)` in `presentation/`; no `@riverpod` function provider calling a repository (legacy ones are listed in [MIGRATION.md](../../MIGRATION.md) — flag as note, but new ones are violations). |
+| 11 | **Service layer** | Every repository access goes through a Service class ([service-layer.md](../tnds-flutter-app/references/service-layer.md)). No `ref.read(*RepositoryProvider)` in `presentation/`; no `@riverpod` function provider calling a repository (legacy ones are listed in [MIGRATION.md](../tnds-flutter-app/MIGRATION.md) — flag as note, but new ones are violations). |
 
 ## Step 3: Output
 
@@ -81,7 +81,7 @@ Severity: High = layer violation, domain purity, cross-feature import · Medium 
 2. Every File cell must include `:line` after the path.
 3. Do not suggest rewrites — suggest the smallest change only.
 4. Do not review files the user did not ask about.
-5. Full project rules are in [../../references/](../../references/) — read the relevant file when a check needs detail.
+5. Full project rules are in [../tnds-flutter-app/references/](../tnds-flutter-app/references/) — read the relevant file when a check needs detail.
 
 ## No Hardcoded Sizes Detail
 

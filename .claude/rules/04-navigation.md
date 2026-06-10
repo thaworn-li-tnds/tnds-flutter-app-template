@@ -1,6 +1,6 @@
 # Navigation Rules
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/navigation.md](../../docs/claude-skill/tnds-flutter-app/references/navigation.md) — read before adding routes or navigating.
+> Full rules: [.claude/skills/tnds-flutter-app/references/navigation.md](../skills/tnds-flutter-app/references/navigation.md) — read before adding routes or navigating.
 
 Non-negotiables:
 

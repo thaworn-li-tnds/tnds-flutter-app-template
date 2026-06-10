@@ -8,7 +8,7 @@ Before generating code in this area, output verbatim: `Reading: module-launcher.
 ## Rules — NEVER Violate
 
 1. **Never hand-roll the module lifecycle.** A new launchable module is built ONLY on the three shared rails in `lib/src/shared/application/`: `ModuleControllerMixin<P, R>`, `loadWhenSessionReady<T>()`, `ModuleLauncherBase<P, R>`.
-2. **The word `Module` marks module-control classes only** (launcher, session controller, lifecycle service). Feature work (screens, content controllers, repositories, domain) stays plain-named.
+2. **The word `Module` marks module-control classes only** (launcher, session controller, lifecycle service). Feature work (screens, content controllers, repositories, domain) stays plain-named. The signal does **not** change folders: a `*_module_controller.dart` is still a controller and lives in `presentation/`; only the launcher (`*_module_launcher.dart`) and module service (`*_module_service.dart`) sit in `application/`.
 3. **The module controller holds session/lifecycle state only** (`ModuleSession`), never a screen's content. Per-screen content lives in auto-disposed `@riverpod` controllers gated by `loadWhenSessionReady`.
 4. **Exactly one terminal result** reaches the caller (`onCompleted` / `onCancelled` / `onFailed`) — enforced by the mixin's `_terminated` guard. Never bypass it.
 5. **Module screens are passive**: the finish button calls `controller.complete()` only — a screen never pops itself; the caller navigates on the result it receives.
@@ -28,7 +28,7 @@ Before generating code in this area, output verbatim: `Reading: module-launcher.
 
 ## Reference implementation — `features/sample_module/`
 
-**1. Session controller** (`application/sample_module_controller.dart`):
+**1. Session controller** (`presentation/sample_module_controller.dart`):
 
 ```dart
 @Riverpod(keepAlive: true)
@@ -126,12 +126,12 @@ Auth factors additionally get an `AuthFactorBinding` (startLink → entry route 
 
 ## Naming — `Module` is a signal, not decoration
 
-| Role | Class | File |
-|---|---|---|
-| Launcher (adapter) | `<Feature>ModuleLauncher` | `<feature>_module_launcher.dart` |
-| Session controller | `<Feature>ModuleController` | `<feature>_module_controller.dart` |
-| Lifecycle service (startX/finishX only) | `<Feature>ModuleService` | `<feature>_module_service.dart` |
-| Screen / content controller / repository / domain | plain (`FrHomeScreen`, `FrHomeController`, `SampleRepository`, `FrHomeData`) | plain |
+| Role | Class | File | Folder |
+|---|---|---|---|
+| Launcher (adapter) | `<Feature>ModuleLauncher` | `<feature>_module_launcher.dart` | `application/` |
+| Session controller | `<Feature>ModuleController` | `<feature>_module_controller.dart` | `presentation/` (it is a controller) |
+| Lifecycle service (startX/finishX only) | `<Feature>ModuleService` | `<feature>_module_service.dart` | `application/` |
+| Screen / content controller / repository / domain | plain (`FrHomeScreen`, `FrHomeController`, `SampleRepository`, `FrHomeData`) | plain | by suffix |
 
 Test: "do this class's functions exist only to control the module?" → yes ⇒ `Module` in the name.
 

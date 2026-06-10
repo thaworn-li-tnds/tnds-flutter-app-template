@@ -53,7 +53,7 @@ Parse the analyze output. Group errors into buckets:
 | **Null safety** | `unnecessary_null_check`, `unnecessary_null_comparison` | Remove the check |
 | **Type error** | `argument_type_not_assignable`, `return_of_invalid_type` | Fix type — read file first |
 | **Missing override** | `must_call_super`, `missing_return` | Add missing code |
-| **Architecture** | `ref.watch` in callback, raw `context.go('/')`, `print(` in lib/src/ | Fix per [../../references/](../../references/) |
+| **Architecture** | `ref.watch` in callback, raw `context.go('/')`, `print(` in lib/src/ | Fix per [../tnds-flutter-app/references/](../tnds-flutter-app/references/) |
 | **Codegen stale** | `undefined_identifier` on generated types, `part` directive missing | Run `rps gen build` |
 
 ---
@@ -78,7 +78,7 @@ Delete the entire `import '...';` line.
 ### prefer_single_quotes
 Change every `"string"` → `'string'` in the affected lines. Escape any internal single quotes with `\'`.
 
-### Architecture violations (per [../../references/](../../references/))
+### Architecture violations (per [../tnds-flutter-app/references/](../tnds-flutter-app/references/))
 - `ref.watch` in callback → move to `build()` or use `ref.read`
 - Raw `context.go('/path')` → replace with `context.goNamed(SomeRouter.value.name)`
 - `print(` → delete the line (no logging replacement unless the context is an error)

@@ -1,6 +1,6 @@
 # Widget Conventions
 
-> Full rules: [docs/claude-skill/tnds-flutter-app/references/widgets-theming.md](../../docs/claude-skill/tnds-flutter-app/references/widgets-theming.md) — read before writing any widget.
+> Full rules: [.claude/skills/tnds-flutter-app/references/widgets-theming.md](../skills/tnds-flutter-app/references/widgets-theming.md) — read before writing any widget.
 
 Non-negotiables:
 

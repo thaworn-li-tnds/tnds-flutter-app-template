@@ -53,9 +53,9 @@ Before writing any file, read the reference implementation in parallel:
 ```bash
 cat lib/src/features/sample_module/domain/sample_launch_params.dart
 cat lib/src/features/sample_module/domain/sample_result.dart
-cat lib/src/features/sample_module/application/sample_module_controller.dart
+cat lib/src/features/sample_module/presentation/sample_module_controller.dart
 cat lib/src/features/sample_module/application/sample_module_launcher.dart
-cat lib/src/features/sample_module/application/sample_screen_controller.dart
+cat lib/src/features/sample_module/presentation/sample_screen_controller.dart
 cat lib/src/features/sample_module/presentation/sample_screen.dart
 cat lib/src/features/sample_module/router/sample_router.dart
 cat lib/src/router/module_registry.dart
@@ -104,7 +104,7 @@ class {FeaturePascal}Result {
 
 ### 3c — Module Controller
 
-`lib/src/features/{featureSnake}/application/{featureSnake}_module_controller.dart`
+`lib/src/features/{featureSnake}/presentation/{featureSnake}_module_controller.dart`
 
 ```dart
 part '{featureSnake}_module_controller.g.dart';
@@ -212,7 +212,7 @@ Skip this file if `hasService = false`.
 
 ### 3f — Screen Controller
 
-`lib/src/features/{featureSnake}/application/{featureSnake}_screen_controller.dart`
+`lib/src/features/{featureSnake}/presentation/{featureSnake}_screen_controller.dart`
 
 ```dart
 part '{featureSnake}_screen_controller.g.dart';
@@ -354,10 +354,10 @@ Fix all errors. Then remind the user:
 Files created:
 - (new) lib/src/features/{featureSnake}/domain/{featureSnake}_launch_params.dart
 - (new) lib/src/features/{featureSnake}/domain/{featureSnake}_result.dart
-- (new) lib/src/features/{featureSnake}/application/{featureSnake}_module_controller.dart
+- (new) lib/src/features/{featureSnake}/presentation/{featureSnake}_module_controller.dart
 - (new) lib/src/features/{featureSnake}/application/{featureSnake}_module_launcher.dart
 - (new) lib/src/features/{featureSnake}/application/{featureSnake}_module_service.dart  [if hasService]
-- (new) lib/src/features/{featureSnake}/application/{featureSnake}_screen_controller.dart  [if content]
+- (new) lib/src/features/{featureSnake}/presentation/{featureSnake}_screen_controller.dart  [if content]
 - (new) lib/src/features/{featureSnake}/presentation/{featureSnake}_screen.dart
 - (new) lib/src/features/{featureSnake}/router/{featureSnake}_router.dart
 
