@@ -69,7 +69,7 @@ testWidgets('shows accounts', (tester) async {
 });
 ```
 
-**Controller/provider unit test** (no UI — `test/src/features/sample_module/sample_module_controller_test.dart` shape):
+**Controller/provider unit test** (no UI — this template's live example: `test/src/features/expense/presentation/create_expense_controller_test.dart`; module-controller shape below is from the reference app):
 
 ```dart
 test('complete closes the session', () async {

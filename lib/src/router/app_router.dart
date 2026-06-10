@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:tnds_flutter_app/src/features/expense/router/expense_router.dart';
 import 'package:tnds_flutter_app/src/features/home/presentation/home_screen.dart';
-import 'package:tnds_flutter_app/src/features/sample_module/router/sample_router.dart';
 import 'package:tnds_flutter_app/src/router/tnds_route.dart';
 
 part 'app_router.g.dart';
@@ -32,7 +32,7 @@ GoRouter goRouter(Ref ref) {
         name: AppRouter.home.name,
         builder: (context, state) => const HomeScreen(),
       ),
-      ...sampleModuleRouter,
+      ...expenseRouter,
     ],
   );
 }

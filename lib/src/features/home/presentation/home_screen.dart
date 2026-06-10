@@ -1,73 +1,38 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tnds_flutter_app/generated/locale_keys.g.dart';
 import 'package:tnds_flutter_app/src/common_widgets/common_app_bar.dart';
 import 'package:tnds_flutter_app/src/common_widgets/common_button_widget.dart';
 import 'package:tnds_flutter_app/src/constants/app_sizes.dart';
-import 'package:tnds_flutter_app/src/extensions/context_extension.dart';
-import 'package:tnds_flutter_app/src/localization/string_hardcoded.dart';
-import 'package:tnds_flutter_app/src/shared/application/launchable_module.dart';
-import 'package:tnds_flutter_app/src/shared/application/module_launcher_registry.dart';
+import 'package:tnds_flutter_app/src/features/expense/router/expense_router.dart';
 
-/// Template home screen. Demonstrates the caller side of the launchable-module
-/// framework: launches `sample_module` generically through
-/// [moduleLauncherRegistry] by id — importing ONLY `shared/`, never the target
-/// module. Replace this screen when building a real app from the template.
-class HomeScreen extends ConsumerStatefulWidget {
+/// Template home screen — a plain menu into the example features. Replace it
+/// when building a real app from the template. Cross-feature it touches ONLY
+/// the expense `router/` enum (navigation surface) — never another feature's
+/// `application/` or `presentation/`.
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-  String _status = 'Module not launched yet'.hardcoded;
-
-  void _launchSample() {
-    final sample = ref.read(moduleLauncherRegistryProvider)['sample'];
-
-    sample?.launch(
-      ModuleLaunchContext(
-        args: {
-          'title': 'Launched from home'.hardcoded,
-          'id': 'sample-id-123',
-        },
-        navOptions: const ModuleNavOptions(
-          entryMode: ModuleEntryMode.push,
-          backTarget: ModuleBackTarget.opener,
-        ),
-      ),
-      (result) {
-        setState(() {
-          _status =
-              'result: ${result.status.name} token: ${result.token}'.hardcoded;
-        });
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CommonAppBar(
-        titleText: 'TNDS Flutter App'.hardcoded,
+        titleText: LocaleKeys.home_title.tr(),
         isShowIconLeft: false,
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(Sizes.kP16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                _status,
-                key: const Key('home_status'),
-                style: context.appTexts.bodyMdRegular,
-                textAlign: TextAlign.center,
-              ),
               const Spacer(),
               CommonButtonWidget(
-                buttonKey: const Key('launch_sample_button'),
-                buttonText: 'Launch sample module'.hardcoded,
-                onButtonPressed: _launchSample,
+                buttonKey: const Key('open_expense_button'),
+                buttonText: LocaleKeys.expense_home_entry_button.tr(),
+                onButtonPressed: () =>
+                    context.pushNamed(ExpenseRouter.expenseList.name),
               ),
             ],
           ),

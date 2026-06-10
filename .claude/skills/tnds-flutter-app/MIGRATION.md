@@ -23,7 +23,11 @@ None. Verify: `grep -rln "await tester\.\|find\.byKey\|find\.text" test/src --in
 
 ## D. Other known debt
 
-- **Home widget tests skipped** (`test/src/features/home/home_screen_test.dart`): `Robot.pumpTestWidget` hangs in this fresh project — suspect EasyLocalization initialization or a never-settling `pumpAndSettle`. Controller tests run fine. Fix the Robot bootstrap, then remove `skip: true`.
+- **No live launchable-module example in the tree** (2026-06-10): `features/sample_module/` was removed when the `expense` feature became the template's reference feature. The module rails stay in `lib/src/shared/application/` + `lib/src/shared/presentation/module_scaffold.dart`; the canonical module example is now the embedded snapshot in [references/module-launcher.md](references/module-launcher.md), and `add-module` scaffolds from it. Restore a live example with `add-module` if one is ever needed.
+
+Resolved:
+
+- The widget-test hang — `EasyLocalization.ensureInitialized()` awaited `SharedPreferences.getInstance()` inside the fake-async test zone — is fixed by `test/flutter_test_config.dart` initializing once outside it; all tests run un-skipped. Verify: `grep -rln "skip:" test/`
 
 ## Definition of done per batch (when debt exists)
 

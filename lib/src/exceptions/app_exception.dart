@@ -58,10 +58,23 @@ sealed class AppException implements Exception {
 
 class UnknownException extends AppException {
   UnknownException([StackTrace? stackTrace])
-      : super(
-          '',
-          LocaleKeys.common_error_title.tr(),
-          LocaleKeys.common_error_description.tr(),
-          data: stackTrace,
-        );
+    : super(
+        '',
+        LocaleKeys.common_error_title.tr(),
+        LocaleKeys.common_error_description.tr(),
+        data: stackTrace,
+      );
+}
+
+/// A failure mode that needs distinct handling gets its own subclass with its
+/// own LocaleKeys — call sites type-check (`is ExpenseNotFoundException`),
+/// never string-match messages. Subclasses MUST live in this file:
+/// [AppException] is `sealed`, so the compiler rejects subtypes elsewhere.
+class ExpenseNotFoundException extends AppException {
+  ExpenseNotFoundException()
+    : super(
+        'EXPENSE_NOT_FOUND',
+        LocaleKeys.expense_error_not_found_title.tr(),
+        LocaleKeys.expense_error_not_found_description.tr(),
+      );
 }

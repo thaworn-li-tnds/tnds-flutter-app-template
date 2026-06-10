@@ -26,6 +26,9 @@ dev_dependencies:
   riverpod_generator: ^2.6.5
   json_serializable: ^6.8.0
   mocktail: ^1.0.4
+  # Test-only: easy_localization awaits SharedPreferences.getInstance() during
+  # ensureInitialized(); tests must seed it via setMockInitialValues.
+  shared_preferences: ^2.5.5
 
 flutter:
   uses-material-design: true

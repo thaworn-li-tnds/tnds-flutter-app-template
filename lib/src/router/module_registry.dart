@@ -1,4 +1,3 @@
-import 'package:tnds_flutter_app/src/features/sample_module/application/sample_module_launcher.dart';
 import 'package:tnds_flutter_app/src/shared/application/launchable_module.dart';
 import 'package:tnds_flutter_app/src/shared/application/module_launcher_registry.dart';
 
@@ -8,9 +7,7 @@ import 'package:tnds_flutter_app/src/shared/application/module_launcher_registry
 /// into the generic registry. Modules stay free of any sibling import; they
 /// meet only here. To add a module: create it (depending only on `shared/`),
 /// then add one entry below and spread its routes into the app router.
-final moduleLauncherRegistryOverride =
-    moduleLauncherRegistryProvider.overrideWith((ref) {
-  return <String, LaunchableModule>{
-    'sample': ref.read(sampleModuleLauncherProvider),
-  };
-});
+final moduleLauncherRegistryOverride = moduleLauncherRegistryProvider
+    .overrideWith((ref) {
+      return <String, LaunchableModule>{};
+    });

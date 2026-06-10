@@ -10,7 +10,10 @@ allowed-tools: Bash, Read, Edit, Write, TodoWrite
 # Skill: Add Module
 
 Scaffold a complete LaunchableModule following rule `09-module-launcher-naming.md`.
-Reference implementation: `lib/src/features/sample_module/`.
+Reference implementation: the embedded snapshot in
+`../tnds-flutter-app/references/module-launcher.md` — there is no live module
+in this template (the `sample_module` copy was removed; see the package
+`MIGRATION.md`).
 
 ---
 
@@ -48,16 +51,15 @@ Derive from answers:
 
 ## Step 2 — Explore & Read Reference
 
-Before writing any file, read the reference implementation in parallel:
+Before writing any file, read the reference doc and the shared rails in
+parallel:
 
 ```bash
-cat lib/src/features/sample_module/domain/sample_launch_params.dart
-cat lib/src/features/sample_module/domain/sample_result.dart
-cat lib/src/features/sample_module/presentation/sample_module_controller.dart
-cat lib/src/features/sample_module/application/sample_module_launcher.dart
-cat lib/src/features/sample_module/presentation/sample_screen_controller.dart
-cat lib/src/features/sample_module/presentation/sample_screen.dart
-cat lib/src/features/sample_module/router/sample_router.dart
+cat .claude/skills/tnds-flutter-app/references/module-launcher.md
+cat lib/src/shared/application/module_controller_mixin.dart
+cat lib/src/shared/application/module_launcher_base.dart
+cat lib/src/shared/application/module_screen_content.dart
+cat lib/src/shared/presentation/module_scaffold.dart
 cat lib/src/router/module_registry.dart
 ```
 
@@ -65,9 +67,10 @@ cat lib/src/router/module_registry.dart
 
 ## Step 3 — Generate Files
 
-Create all files. Use `sample_module` as the exact reference — mirror imports,
-annotations, and structure. Only substitute the feature name and the fields
-from the answers in Step 0.
+Create all files. Use the `sample_module` snapshot embedded in
+`module-launcher.md` as the exact reference — mirror imports, annotations, and
+structure. Only substitute the feature name and the fields from the answers in
+Step 0.
 
 ### 3a — Domain: LaunchParams
 
@@ -374,7 +377,7 @@ Next steps:
 
 ## Notes
 
-- Reference every generated file against `sample_module` — if something looks different, it's probably wrong.
+- Reference every generated file against the `sample_module` snapshot in `module-launcher.md` and the templates above — if something looks different, it's probably wrong.
 - Module controller is `keepAlive: true`; screen controllers are `@riverpod` (auto-dispose).
 - `ModuleScaffold` is **entry screen only** — deeper screens use plain `Scaffold`.
 - Screens never `pop()` themselves — `controller.complete()` only.

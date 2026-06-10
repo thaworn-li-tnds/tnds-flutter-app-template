@@ -26,7 +26,9 @@ Before generating code in this area, output verbatim: `Reading: module-launcher.
 
 `ModuleSession` (sealed, `module_session.dart`): `Idle → Loading → Ready → (Finishing) → Closed`, with `Failed` as the escapable error state. The mixin drives `start` → `AsyncValue.guard(openSession)` → `Ready`/`Failed`, `complete`, `cancel`, and the exactly-once `_fail` path.
 
-## Reference implementation — `features/sample_module/`
+## Reference implementation — `sample_module` (embedded snapshot)
+
+> This snapshot is the canonical module example. The live `features/sample_module/` copy was removed from this template when `expense` became the reference feature (see `MIGRATION.md`); scaffold a real module with the `add-module` skill.
 
 **1. Session controller** (`presentation/sample_module_controller.dart`):
 
@@ -148,13 +150,13 @@ Note: a module does not have to own content screens — `otp` keeps only a sessi
 
 ## Exemption
 
-`authentication/auth_module` is an orchestrator (multi-step factor flow state), not a single-session module — it implements `LaunchableModule` for callers but does not use the session rails internally. Do not copy its internals for a normal module; copy `sample_module`.
+`authentication/auth_module` (reference app) is an orchestrator (multi-step factor flow state), not a single-session module — it implements `LaunchableModule` for callers but does not use the session rails internally. Do not copy its internals for a normal module; copy the `sample_module` snapshot above.
 
 Discoverability: `ls lib/src/features/*/application/*_module_launcher.dart` · `grep -rn "ModuleLauncher\|ModuleController" lib/`
 
 ## Recap
 
-1. Three rails, never hand-rolled; `sample_module` is the template.
+1. Three rails, never hand-rolled; the `sample_module` snapshot above is the template.
 2. Session state in the keepAlive Module controller; content in auto-dispose screen controllers.
 3. Exactly one terminal result; screens passive; `ModuleScaffold` entry-only.
 4. Wire at `module_registry.dart`; params via `args` bag; `Module` naming = control classes only.

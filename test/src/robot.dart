@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:tnds_flutter_app/src/themes/app_theme.dart';
 
 import 'mocks.dart';
@@ -14,14 +16,38 @@ class Robot {
 
   final WidgetTester tester;
 
+  /// Mock router injected by [pumpTestWidget]; verify navigation with e.g.
+  /// `verify(() => robot.goRouter.pushNamed(...))`.
+  late MockGoRouter goRouter;
+
   /// Pumps [widget] inside the app shell (Riverpod + EasyLocalization +
-  /// MaterialApp with the app theme). Inject fakes via [overrideRepos].
+  /// MaterialApp with the app theme + mock GoRouter). Inject fakes via
+  /// [overrideRepos]. NOTE: `EasyLocalization.ensureInitialized()` runs once
+  /// in `test/flutter_test_config.dart` — awaiting it here, inside the
+  /// fake-async test zone, deadlocks on `SharedPreferences.getInstance()`.
   Future<void> pumpTestWidget(
     Widget widget, {
     List<Override> overrideRepos = const [],
     ProviderContainer? container,
   }) async {
-    await EasyLocalization.ensureInitialized();
+    goRouter = MockGoRouter();
+    when(
+      () => goRouter.pushNamed(
+        any(),
+        pathParameters: any(named: 'pathParameters'),
+        queryParameters: any(named: 'queryParameters'),
+        extra: any(named: 'extra'),
+      ),
+    ).thenAnswer((_) async => null);
+    when(
+      () => goRouter.goNamed(
+        any(),
+        pathParameters: any(named: 'pathParameters'),
+        queryParameters: any(named: 'queryParameters'),
+        extra: any(named: 'extra'),
+      ),
+    ).thenAnswer((_) {});
+    when(() => goRouter.canPop()).thenReturn(true);
 
     container ??= ProviderContainer(overrides: [...overrideRepos]);
     addTearDown(container.dispose);
@@ -40,7 +66,7 @@ class Robot {
                 supportedLocales: context.supportedLocales,
                 locale: context.locale,
                 theme: container!.read(lightThemeProvider),
-                home: widget,
+                home: InheritedGoRouter(goRouter: goRouter, child: widget),
               );
             },
           ),
@@ -71,8 +97,11 @@ class Robot {
   void expectType(Type type, {int n = 1}) =>
       expectWidgets(find.byType(type), n: n);
 
-  void expectLabelText(String key, String expectedText,
-      {bool isContain = false}) {
+  void expectLabelText(
+    String key,
+    String expectedText, {
+    bool isContain = false,
+  }) {
     final finder = find.byKey(Key(key));
     expect(finder, findsOneWidget);
     final Text label = tester.widget<Text>(finder);

@@ -16,7 +16,7 @@ Before generating code in this area, output verbatim: `Reading: service-layer.md
 
 ## Canonical Service class
 
-From `lib/src/features/sample_module/application/sample_screen_service.dart` — copy this shape verbatim:
+From the reference app's `sample_screen_service.dart` — copy this shape verbatim (this template's live example: `lib/src/features/expense/application/expense_service.dart`):
 
 ```dart
 import 'package:flutter_mymo_sme/src/features/sample_module/data/sample_repository.dart';
