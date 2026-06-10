@@ -270,7 +270,7 @@ Critical rules (from rule 09):
 `lib/src/features/{featureSnake}/router/{featureSnake}_router.dart`
 
 ```dart
-enum {FeaturePascal}Router with MymoRouter {
+enum {FeaturePascal}Router with TndsRouter {
   home;
   // add more values if multi-screen
 

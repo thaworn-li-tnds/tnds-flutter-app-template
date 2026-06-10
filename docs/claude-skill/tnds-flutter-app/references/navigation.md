@@ -8,18 +8,18 @@ Before generating code in this area, output verbatim: `Reading: navigation.md`
 ## Rules — NEVER Violate
 
 1. **Enum-based navigation only**: `context.goNamed(XRouter.y.name)` / `context.pushNamed(...)`. Raw path strings (`context.go('/login')`) are forbidden.
-2. **Every route group is an enum `with MymoRouter`** defining `routerName` and `path`; `name` is derived by the mixin — never hand-write route name strings.
+2. **Every route group is an enum `with TndsRouter`** defining `routerName` and `path`; `name` is derived by the mixin — never hand-write route name strings.
 3. **Route paths are kebab-case; enum values camelCase.**
 4. **Deeplink entry routes use `queryParameters` only** — `extra` objects are lost on deeplink re-entry.
 5. **Programmatic navigation from services/controllers goes through `ref.read(goRouterProvider)`** — never store a `GoRouter` reference manually.
 6. Feature routes live in `features/<name>/router/<name>_router.dart` and are spread into the app router (or `module_registry.dart` for module routes) — `app_router.dart` does not define feature screens inline.
 
-## The MymoRouter mixin
+## The TndsRouter mixin
 
-`lib/src/router/mymo_route.dart`:
+`lib/src/router/tnds_route.dart`:
 
 ```dart
-mixin MymoRouter {
+mixin TndsRouter {
   String get routerName;
   String get path;
   String get parent => '';
@@ -38,7 +38,7 @@ mixin MymoRouter {
 From `lib/src/features/face_recognition/router/face_recognition_router.dart`:
 
 ```dart
-enum FaceRecognitionRouter with MymoRouter {
+enum FaceRecognitionRouter with TndsRouter {
   frTutorial,
   frScan;
 
@@ -104,7 +104,7 @@ ref.read(goRouterProvider).enterModule(SampleModuleRouter.home.name, entryMode);
 
 ## Recap
 
-1. Enum + `MymoRouter`; navigate by `.name`, never raw paths.
+1. Enum + `TndsRouter`; navigate by `.name`, never raw paths.
 2. Deeplinks: queryParameters only.
 3. Route builders never crash on missing extras — fall back to a safe screen.
 4. Services navigate via `goRouterProvider`.

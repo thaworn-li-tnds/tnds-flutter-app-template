@@ -28,7 +28,7 @@ Every feature under `lib/src/features/<name>/`:
 │   └── fake/         # fake_*_repository.dart (offline/test impls)
 ├── domain/           # Pure Dart models (nouns), launch params, results
 ├── presentation/     # Screens (*_screen.dart), controllers (*_controller.dart), widgets/
-└── router/           # *_router.dart (enum with MymoRouter + GoRoute list)
+└── router/           # *_router.dart (enum with TndsRouter + GoRoute list)
 ```
 
 Sub-domain features (`payment/transfer`, `payment/recipient`, `authentication/auth_module`) repeat the same internal structure one level down.

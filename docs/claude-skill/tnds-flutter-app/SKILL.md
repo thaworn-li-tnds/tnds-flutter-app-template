@@ -50,7 +50,7 @@ After every code change to a `.dart` file:
 
 7. **json_serializable only — NO freezed.** DTOs have `fromJson`/`toJson` (+ `@JsonKey`, `explicitToJson: true` for nesting); repositories map DTO → domain noun and DTOs never leak past the data layer. [data-layer.md](references/data-layer.md)
 
-8. **Navigation by enum + `MymoRouter` mixin**: `context.goNamed(XRouter.y.name)` — never raw path strings. Deeplink routes use `queryParameters` only. Services navigate via `ref.read(goRouterProvider)`. [navigation.md](references/navigation.md)
+8. **Navigation by enum + `TndsRouter` mixin**: `context.goNamed(XRouter.y.name)` — never raw path strings. Deeplink routes use `queryParameters` only. Services navigate via `ref.read(goRouterProvider)`. [navigation.md](references/navigation.md)
 
 9. **New repository ⇒ ASK the user which Dio client** (`mymoMsDio` / `viperaDio` / `viperaAppSaltDio` / `cdnDio` / `viperaConfigDio`). The salt is a backend crypto contract that cannot be inferred — never copy a neighbor's choice. [dio-clients.md](references/dio-clients.md)
 
@@ -142,7 +142,7 @@ Rule of thumb: 3–5 bullets per file, never paste reference content in — the 
 
 ### Adapting to a different app
 
-The references describe the MyMo SME codebase (file paths, class names like `ViperaBaseRepository`, `MymoRouter`). When adopting elsewhere: sweep `references/` for facts that don't match the new app, and drop `MIGRATION.md` — it lists this repo's legacy debt, not yours.
+The references describe the MyMo SME codebase (file paths, class names like `ViperaBaseRepository`, `TndsRouter`). When adopting elsewhere: sweep `references/` for facts that don't match the new app, and drop `MIGRATION.md` — it lists this repo's legacy debt, not yours.
 
 ## Architecture
 
@@ -161,7 +161,7 @@ lib/src/
 │   ├── data/             # repositories, dto/{request,response}/, fake/
 │   ├── domain/           # pure Dart nouns
 │   ├── presentation/     # screens, controllers, widgets
-│   └── router/           # enum with MymoRouter + GoRoute list
+│   └── router/           # enum with TndsRouter + GoRoute list
 ├── shared/               # same 4-way split, used by 2+ features (module rails live here)
 ├── common_widgets/  router/  exceptions/  themes/  constants/  utils/  localization/
 ```
@@ -172,7 +172,7 @@ lib/src/
 |---|---|---|
 | Flutter 3.41.6 (FVM-pinned) | Framework | use `fvm flutter` |
 | riverpod + riverpod_annotation | State (codegen) | annotations only |
-| go_router | Navigation | enum + `MymoRouter` |
+| go_router | Navigation | enum + `TndsRouter` |
 | json_serializable + build_runner | Serialization | **no freezed** |
 | dio (5 configured clients) | HTTP | client choice = user-confirmed |
 | easy_localization + generated LocaleKeys | i18n (remote-loaded) | th/en |

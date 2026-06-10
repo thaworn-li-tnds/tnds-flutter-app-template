@@ -15,7 +15,7 @@ Foundation for new TNDS Flutter apps. Carries the team's coding standard, archit
 |---|---|
 | Flutter version | FVM (`.fvmrc`) |
 | State management | Riverpod + `riverpod_annotation` (codegen only) |
-| Router | `go_router` with enum + `MymoRouter` mixin |
+| Router | `go_router` with enum + `TndsRouter` mixin |
 | Serialization | `json_serializable` (no freezed) |
 | Localization | `easy_localization` with generated locale keys |
 | Scripts | RPS (`rps gen build`, `rps analyze`, `rps test`) |

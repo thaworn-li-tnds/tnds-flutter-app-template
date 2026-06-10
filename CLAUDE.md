@@ -22,7 +22,7 @@ Companion workflow skills (generate-api, add-module, add-locale-key, fix-analysi
 
 - **Flutter** pinned via FVM (`.fvmrc`); use `fvm flutter ...`.
 - **State mgmt**: Riverpod + `riverpod_annotation` (codegen only, all `*.g.dart`).
-- **Router**: `go_router` — central config in `lib/src/router/app_router.dart`, per-feature routes under `lib/src/features/<feature>/router/`, enum + `MymoRouter`-style mixin.
+- **Router**: `go_router` — central config in `lib/src/router/app_router.dart`, per-feature routes under `lib/src/features/<feature>/router/`, enum + `TndsRouter`-style mixin.
 - **Serialization**: `json_serializable` — no freezed.
 - **Localization**: `easy_localization` with generated locale keys.
 - **Scripts**: RPS (`scripts:` in `pubspec.yaml`) — `rps gen build`, `rps analyze`, `rps test`, etc.

@@ -35,7 +35,7 @@ Before generating code in this area, output verbatim: `Reading: naming-conventio
 | Service | `<Feature>Service` | `TransferService` |
 | Controller | `<Feature>Controller` | `BankListController` |
 | Repository | `<Feature>Repository` | `PaymentRepository` |
-| Route enum | `<Feature>Router with MymoRouter` | `FaceRecognitionRouter` |
+| Route enum | `<Feature>Router with TndsRouter` | `FaceRecognitionRouter` |
 | DTO | `<Operation>Request` / `<Operation>Response` | `RequestStatementRequest`, `LoginWithPinResponse` |
 | Module launcher / controller / service | `<Feature>Module{Launcher,Controller,Service}` | `SampleModuleLauncher` |
 | Launch params / result (domain) | `<Feature>LaunchParams` / `<Feature>Result` | `SampleLaunchParams`, `SampleResult` |

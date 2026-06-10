@@ -23,7 +23,7 @@ None. Verify: `grep -rln "await tester\.\|find\.byKey\|find\.text" test/src --in
 
 ## D. Other known debt
 
-None.
+- **Home widget tests skipped** (`test/src/features/home/home_screen_test.dart`): `Robot.pumpTestWidget` hangs in this fresh project — suspect EasyLocalization initialization or a never-settling `pumpAndSettle`. Controller tests run fine. Fix the Robot bootstrap, then remove `skip: true`.
 
 ## Definition of done per batch (when debt exists)
 
