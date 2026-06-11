@@ -18,6 +18,7 @@ class TestAssetLoader extends AssetLoader {
   Future<Map<String, dynamic>> load(String path, Locale locale) async {
     return {
       'common': {
+        'cancel': 'Cancel',
         'close': 'Close',
         'error': {
           'title': 'Something went wrong',
@@ -26,6 +27,14 @@ class TestAssetLoader extends AssetLoader {
       },
       'home': {'title': 'TNDS Flutter App'},
       'expense': {
+        'budget': {
+          'empty': 'No budgets or spending this month',
+          'limit': 'Limit {}',
+          'no_budget': 'No budget set',
+          'over_by': 'Over by {}',
+          'remaining': '{} left',
+          'title': 'Budget',
+        },
         'category': {
           'entertainment': 'Entertainment',
           'food': 'Food',
@@ -46,8 +55,12 @@ class TestAssetLoader extends AssetLoader {
           'amount': 'Amount',
           'category': 'Category',
           'date': 'Date',
+          'delete_button': 'Delete expense',
+          'delete_confirm_message': 'This expense will be permanently removed.',
+          'delete_confirm_title': 'Delete this expense?',
           'title': 'Expense detail',
         },
+        'edit': {'save_button': 'Save changes', 'title': 'Edit expense'},
         'error': {
           'not_found_description':
               'The expense may have been deleted. Refresh and try again.',

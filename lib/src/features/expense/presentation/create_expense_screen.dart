@@ -11,6 +11,7 @@ import 'package:tnds_flutter_app/src/extensions/context_extension.dart';
 import 'package:tnds_flutter_app/src/features/expense/domain/expense_category.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/create_expense_controller.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/expense_list_controller.dart';
+import 'package:tnds_flutter_app/src/features/expense/presentation/widgets/expense_form_fields.dart';
 
 /// Create form. `ConsumerStatefulWidget` is correct here because the State
 /// holds LOCAL form inputs only (text controllers, picked category) — server
@@ -76,44 +77,11 @@ class _CreateExpenseScreenState extends ConsumerState<CreateExpenseScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextFormField(
-                  key: const Key('expense_title_field'),
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: LocaleKeys.expense_create_title_label.tr(),
-                  ),
-                  validator: (value) => (value == null || value.trim().isEmpty)
-                      ? LocaleKeys.expense_create_title_required.tr()
-                      : null,
-                ),
-                kGapH16,
-                TextFormField(
-                  key: const Key('expense_amount_field'),
-                  controller: _amountController,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: LocaleKeys.expense_create_amount_label.tr(),
-                  ),
-                  validator: (value) {
-                    final amount = double.tryParse(value ?? '');
-                    return (amount == null || amount <= 0)
-                        ? LocaleKeys.expense_create_amount_invalid.tr()
-                        : null;
-                  },
-                ),
-                kGapH24,
-                Text(
-                  LocaleKeys.expense_create_category_label.tr(),
-                  style: context.appTexts.bodySmRegular.copyWith(
-                    color: context.appColors.textSecondary,
-                  ),
-                ),
-                kGapH8,
-                _CategoryPicker(
-                  selected: _category,
-                  onSelected: (category) =>
+                ExpenseFormFields(
+                  titleController: _titleController,
+                  amountController: _amountController,
+                  selectedCategory: _category,
+                  onCategorySelected: (category) =>
                       setState(() => _category = category),
                 ),
                 const Spacer(),
@@ -139,30 +107,6 @@ class _CreateExpenseScreenState extends ConsumerState<CreateExpenseScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _CategoryPicker extends StatelessWidget {
-  const _CategoryPicker({required this.selected, required this.onSelected});
-
-  final ExpenseCategory selected;
-  final ValueChanged<ExpenseCategory> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: Sizes.kP8,
-      runSpacing: Sizes.kP8,
-      children: [
-        for (final category in ExpenseCategory.values)
-          ChoiceChip(
-            key: Key('expense_category_chip_${category.name}'),
-            label: Text(category.labelKey.tr()),
-            selected: selected == category,
-            onSelected: (_) => onSelected(category),
-          ),
-      ],
     );
   }
 }

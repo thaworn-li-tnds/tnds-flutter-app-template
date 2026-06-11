@@ -1,6 +1,7 @@
 import 'package:tnds_flutter_app/generated/locale_keys.g.dart';
 
-/// Enum with behavior — the wire value and label key live ON the enum, so no
+/// Value object (enum with behavior) — the wire value and label key live ON
+/// the enum, so no
 /// switch statements get duplicated at call sites. `LocaleKeys` is generated
 /// pure-Dart constants, legal in domain; calling `.tr()` on [labelKey] happens
 /// only in presentation. The category icon is deliberately NOT here:

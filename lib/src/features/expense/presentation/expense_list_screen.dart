@@ -29,7 +29,14 @@ class ExpenseListScreen extends ConsumerWidget {
     final overviewAsync = ref.watch(expenseListControllerProvider);
 
     return Scaffold(
-      appBar: CommonAppBar(titleText: LocaleKeys.expense_list_title.tr()),
+      appBar: CommonAppBar(
+        titleText: LocaleKeys.expense_list_title.tr(),
+        isShowIconRight: true,
+        // Default rightIcon is Icons.close — always override for an action.
+        rightIcon: Icons.savings_outlined,
+        onClickIconRight: () =>
+            context.pushNamed(ExpenseRouter.budgetOverview.name),
+      ),
       body: SafeArea(
         child: SystemAsyncValueWidget<ExpenseOverview>(
           value: overviewAsync,

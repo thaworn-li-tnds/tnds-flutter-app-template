@@ -1,5 +1,6 @@
 import 'package:tnds_flutter_app/src/exceptions/app_exception.dart';
 import 'package:tnds_flutter_app/src/features/expense/data/dto/request/create_expense_request.dart';
+import 'package:tnds_flutter_app/src/features/expense/data/dto/request/update_expense_request.dart';
 import 'package:tnds_flutter_app/src/features/expense/data/expense_repository.dart';
 import 'package:tnds_flutter_app/src/features/expense/domain/expense.dart';
 import 'package:tnds_flutter_app/src/features/expense/domain/expense_category.dart';
@@ -39,16 +40,27 @@ class FakeExpenseRepository implements ExpenseRepository {
     this.addDelay = false,
     List<Expense>? expenses,
     this.errorToThrow,
+    this.writeError,
   }) : _expenses = expenses ?? kFakeExpenses;
 
   final bool addDelay;
   final List<Expense> _expenses;
 
-  /// When set, every method throws it — for error-state tests.
+  /// When set, every method throws it — for whole-screen error-state tests.
   final Object? errorToThrow;
+
+  /// When set, only the WRITE methods (create/update/delete) throw it — so a
+  /// screen can load its data and then fail the mutation (inline-error tests).
+  final Object? writeError;
 
   /// Spy: requests passed to [createExpense], for test assertions.
   final List<CreateExpenseRequest> createdRequests = [];
+
+  /// Spy: `(id, request)` pairs passed to [updateExpense].
+  final List<({String id, UpdateExpenseRequest request})> updatedRequests = [];
+
+  /// Spy: ids passed to [deleteExpense].
+  final List<String> deletedIds = [];
 
   Future<void> _delay() async {
     if (addDelay) {
@@ -59,6 +71,11 @@ class FakeExpenseRepository implements ExpenseRepository {
   Future<void> _maybeThrow() async {
     await _delay();
     if (errorToThrow != null) throw errorToThrow!;
+  }
+
+  Future<void> _maybeThrowWrite() async {
+    await _maybeThrow();
+    if (writeError != null) throw writeError!;
   }
 
   @override
@@ -78,7 +95,7 @@ class FakeExpenseRepository implements ExpenseRepository {
 
   @override
   Future<Expense> createExpense(CreateExpenseRequest request) async {
-    await _maybeThrow();
+    await _maybeThrowWrite();
     createdRequests.add(request);
     return Expense(
       id: 'exp-created',
@@ -87,5 +104,31 @@ class FakeExpenseRepository implements ExpenseRepository {
       money: Money(amount: double.tryParse(request.amount ?? '') ?? 0),
       date: request.date ?? '',
     );
+  }
+
+  @override
+  Future<Expense> updateExpense(String id, UpdateExpenseRequest request) async {
+    await _maybeThrowWrite();
+    updatedRequests.add((id: id, request: request));
+    // Mirror the real repository's not-found contract.
+    if (_expenses.every((expense) => expense.id != id)) {
+      throw ExpenseNotFoundException();
+    }
+    return Expense(
+      id: id,
+      title: request.title ?? '',
+      category: ExpenseCategory.from(request.category),
+      money: Money(amount: double.tryParse(request.amount ?? '') ?? 0),
+      date: request.date ?? '',
+    );
+  }
+
+  @override
+  Future<void> deleteExpense(String id) async {
+    await _maybeThrowWrite();
+    if (_expenses.every((expense) => expense.id != id)) {
+      throw ExpenseNotFoundException();
+    }
+    deletedIds.add(id);
   }
 }

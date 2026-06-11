@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
+import 'package:tnds_flutter_app/src/features/expense/presentation/budget_overview_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/create_expense_screen.dart';
+import 'package:tnds_flutter_app/src/features/expense/presentation/edit_expense_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/expense_detail_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/expense_list_screen.dart';
 import 'package:tnds_flutter_app/src/router/tnds_route.dart';
@@ -9,7 +11,9 @@ import 'package:tnds_flutter_app/src/router/tnds_route.dart';
 enum ExpenseRouter with TndsRouter {
   expenseList,
   expenseDetail,
-  createExpense;
+  createExpense,
+  editExpense,
+  budgetOverview;
 
   @override
   String get routerName => 'expense_router';
@@ -23,6 +27,10 @@ enum ExpenseRouter with TndsRouter {
         return '/expense/detail';
       case ExpenseRouter.createExpense:
         return '/expense/create';
+      case ExpenseRouter.editExpense:
+        return '/expense/edit';
+      case ExpenseRouter.budgetOverview:
+        return '/expense/budget';
     }
   }
 }
@@ -47,5 +55,18 @@ final expenseRouter = <GoRoute>[
     path: ExpenseRouter.createExpense.path,
     name: ExpenseRouter.createExpense.name,
     builder: (context, state) => const CreateExpenseScreen(),
+  ),
+  GoRoute(
+    path: ExpenseRouter.editExpense.path,
+    name: ExpenseRouter.editExpense.name,
+    // queryParameters (not `extra`) so an edit deeplink survives re-entry; a
+    // missing id falls through to the screen's not-found state, no crash.
+    builder: (context, state) =>
+        EditExpenseScreen(expenseId: state.uri.queryParameters['id'] ?? ''),
+  ),
+  GoRoute(
+    path: ExpenseRouter.budgetOverview.path,
+    name: ExpenseRouter.budgetOverview.name,
+    builder: (context, state) => const BudgetOverviewScreen(),
   ),
 ];

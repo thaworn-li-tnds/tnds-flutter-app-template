@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>สร้าง Feature แบบ TNDS — คู่มือ Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#0d1117; --bg-2:#0a0d12; --panel:#141b24; --panel-2:#1a2230;
+  --border:#243042; --border-soft:#1c2533;
+  --txt:#e6edf3; --txt-dim:#9aa7b6; --txt-faint:#6b7888;
+  --brand:#4aa9ff; --brand-2:#7c5cff; --accent:#2dd4bf;
+  --green:#3fb950; --amber:#e3b341; --red:#f85149; --pink:#ff7b9c;
+  /* layer colors */
+  --l-pres:#ff7b9c; --l-app:#7c5cff; --l-dom:#2dd4bf; --l-data:#e3b341;
+  --code-bg:#0b1017;
+  --radius:14px; --radius-sm:9px;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'IBM Plex Sans Thai',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --maxw:980px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(124,92,255,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(74,169,255,.08), transparent 55%),
+    var(--bg);
+  color:var(--txt);font-family:var(--sans);line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--brand);text-decoration:none}
+
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:288px 1fr;min-height:100vh}
+.sidebar{
+  position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+  background:linear-gradient(180deg,var(--bg-2),rgba(10,13,18,.6));
+  border-right:1px solid var(--border-soft);padding:22px 16px 60px;
+}
+.main{min-width:0}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:40px 28px 120px}
+
+/* ---------- sidebar ---------- */
+.brand{display:flex;gap:11px;align-items:center;padding:4px 8px 18px}
+.brand .logo{
+  width:38px;height:38px;border-radius:11px;flex:none;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  display:grid;place-items:center;font-weight:700;color:#fff;font-size:18px;
+  box-shadow:0 6px 18px rgba(74,169,255,.35);
+}
+.brand b{font-size:15px;display:block;letter-spacing:.2px}
+.brand span{font-size:11.5px;color:var(--txt-faint);font-family:var(--mono)}
+.nav-progress{padding:0 8px 14px}
+.bar{height:6px;border-radius:99px;background:var(--panel-2);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--brand),var(--accent));transition:width .4s ease}
+.nav-progress small{color:var(--txt-faint);font-size:11px;font-family:var(--mono);display:block;margin-top:6px}
+
+.nav{list-style:none;margin:8px 0 0;padding:0}
+.nav li{margin:1px 0}
+.nav button{
+  width:100%;text-align:left;background:none;border:none;color:var(--txt-dim);
+  font-family:var(--sans);font-size:13.5px;padding:9px 12px;border-radius:9px;
+  cursor:pointer;display:flex;align-items:center;gap:10px;transition:.15s;line-height:1.3;
+}
+.nav button:hover{background:var(--panel);color:var(--txt)}
+.nav button.active{background:var(--panel-2);color:var(--txt);box-shadow:inset 2px 0 0 var(--brand)}
+.nav .n-num{font-family:var(--mono);font-size:11px;width:20px;height:20px;flex:none;
+  border-radius:6px;display:grid;place-items:center;background:var(--panel);color:var(--txt-faint)}
+.nav button.active .n-num{background:var(--brand);color:#04121f}
+.nav button.done .n-num{background:rgba(63,185,80,.16);color:var(--green)}
+.nav .sec-label{font-size:10.5px;letter-spacing:1.4px;text-transform:uppercase;
+  color:var(--txt-faint);padding:16px 12px 6px;font-family:var(--mono)}
+
+/* ---------- sections ---------- */
+.section{display:none;animation:fade .35s ease}
+.section.show{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--brand);margin:0 0 6px}
+h1{font-size:30px;line-height:1.25;margin:0 0 12px;letter-spacing:-.3px}
+h2{font-size:22px;margin:38px 0 12px;letter-spacing:-.2px;scroll-margin-top:20px}
+h3{font-size:16.5px;margin:26px 0 8px}
+.lead{font-size:16px;color:var(--txt-dim);max-width:70ch}
+p{margin:10px 0}
+.muted{color:var(--txt-dim)}
+
+/* ---------- cards / callouts ---------- */
+.card{background:var(--panel);border:1px solid var(--border-soft);border-radius:var(--radius);
+  padding:18px 20px;margin:16px 0}
+.grid{display:grid;gap:14px}
+@media(min-width:720px){.grid.cols-2{grid-template-columns:1fr 1fr}.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+
+.why{border-left:3px solid var(--brand);background:linear-gradient(90deg,rgba(74,169,255,.08),transparent 80%);
+  border-radius:0 10px 10px 0;padding:12px 16px;margin:14px 0}
+.why b{color:var(--brand)}
+.why.warn{border-color:var(--red);background:linear-gradient(90deg,rgba(248,81,73,.09),transparent 80%)}
+.why.warn b{color:var(--red)}
+.why.ok{border-color:var(--green);background:linear-gradient(90deg,rgba(63,185,80,.08),transparent 80%)}
+.why.ok b{color:var(--green)}
+.why .h{display:flex;align-items:center;gap:8px;font-weight:600;margin-bottom:3px}
+
+.pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11.5px;
+  padding:3px 9px;border-radius:99px;border:1px solid var(--border);background:var(--panel-2);color:var(--txt-dim)}
+.pill.pres{color:var(--l-pres);border-color:rgba(255,123,156,.35)}
+.pill.app{color:var(--l-app);border-color:rgba(124,92,255,.4)}
+.pill.dom{color:var(--l-dom);border-color:rgba(45,212,191,.4)}
+.pill.data{color:var(--l-data);border-color:rgba(227,179,65,.4)}
+
+/* ---------- code ---------- */
+.code{background:var(--code-bg);border:1px solid var(--border);border-radius:12px;margin:14px 0;overflow:hidden}
+.code .bar2{display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:1px solid var(--border-soft);
+  background:rgba(255,255,255,.015)}
+.code .dot{width:11px;height:11px;border-radius:99px;background:#2b3543}
+.code .fname{font-family:var(--mono);font-size:12px;color:var(--txt-dim);margin-left:4px}
+.code .fname b{color:var(--txt)}
+.code .copy{margin-left:auto;background:var(--panel-2);border:1px solid var(--border);color:var(--txt-dim);
+  font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:7px;cursor:pointer;transition:.15s}
+.code .copy:hover{color:var(--txt);border-color:var(--brand)}
+pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--mono);font-size:12.8px;line-height:1.75;tab-size:2}
+pre code{font-family:inherit}
+.tok-c{color:#5a6b7d;font-style:italic}      /* comment */
+.tok-s{color:#7ee787}                          /* string */
+.tok-k{color:#ff7b9c}                          /* keyword */
+.tok-t{color:#79c0ff}                          /* type */
+.tok-a{color:#d2a8ff}                          /* annotation */
+.tok-n{color:#f0b86e}                          /* number */
+.tok-fn{color:#56d4dd}                         /* function-ish */
+.hl{background:rgba(227,179,65,.13);display:block;margin:0 -18px;padding:0 18px;
+  box-shadow:inset 3px 0 0 var(--amber)}
+
+/* ---------- architecture diagram ---------- */
+.arch{display:flex;flex-direction:column;gap:0;margin:22px 0}
+.layer{position:relative;border:1px solid var(--border);border-radius:12px;padding:15px 18px;margin:7px 0;cursor:pointer;
+  background:var(--panel);transition:.18s;display:flex;align-items:center;gap:16px}
+.layer:hover{transform:translateX(4px);border-color:var(--accent)}
+.layer .lc{width:54px;height:54px;border-radius:12px;flex:none;display:grid;place-items:center;font-size:24px}
+.layer .lt b{font-size:15px}
+.layer .lt code{font-family:var(--mono);font-size:11.5px;color:var(--txt-faint)}
+.layer .lt p{margin:3px 0 0;font-size:13px;color:var(--txt-dim)}
+.layer[data-l=pres]{box-shadow:inset 4px 0 0 var(--l-pres)} .layer[data-l=pres] .lc{background:rgba(255,123,156,.12);color:var(--l-pres)}
+.layer[data-l=app]{box-shadow:inset 4px 0 0 var(--l-app)} .layer[data-l=app] .lc{background:rgba(124,92,255,.14);color:var(--l-app)}
+.layer[data-l=dom]{box-shadow:inset 4px 0 0 var(--l-dom)} .layer[data-l=dom] .lc{background:rgba(45,212,191,.12);color:var(--l-dom)}
+.layer[data-l=data]{box-shadow:inset 4px 0 0 var(--l-data)} .layer[data-l=data] .lc{background:rgba(227,179,65,.12);color:var(--l-data)}
+.arrow{text-align:center;color:var(--txt-faint);font-size:13px;font-family:var(--mono);line-height:1}
+.arrow b{color:var(--accent)}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 0}
+.tab{background:var(--panel);border:1px solid var(--border);color:var(--txt-dim);padding:8px 15px;
+  border-radius:9px;cursor:pointer;font-family:var(--sans);font-size:13.5px;font-weight:500;transition:.15s}
+.tab:hover{color:var(--txt)}
+.tab.active{background:var(--panel-2);color:var(--txt);border-color:var(--accent)}
+.tabpane{display:none}.tabpane.show{display:block;animation:fade .3s ease}
+
+/* ---------- table ---------- */
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border-soft);vertical-align:top}
+th{color:var(--txt-faint);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+td code,p code,li code{font-family:var(--mono);font-size:12px;background:var(--panel-2);padding:1px 6px;border-radius:5px;color:var(--accent)}
+tr:hover td{background:rgba(255,255,255,.012)}
+
+/* ---------- flow trace ---------- */
+.trace{margin:18px 0}
+.trace .step{display:flex;gap:14px;padding:13px 16px;border:1px solid var(--border-soft);border-radius:11px;
+  margin:8px 0;background:var(--panel);opacity:.42;transition:.35s;transform:scale(.99)}
+.trace .step.on{opacity:1;border-color:var(--brand);box-shadow:0 0 0 1px var(--brand),0 10px 30px rgba(74,169,255,.12);transform:scale(1)}
+.trace .step .num{font-family:var(--mono);font-weight:600;width:30px;height:30px;flex:none;border-radius:8px;
+  display:grid;place-items:center;background:var(--panel-2);color:var(--txt-faint)}
+.trace .step.on .num{background:var(--brand);color:#04121f}
+.trace .step .b b{font-size:14px}
+.trace .step .b code{font-family:var(--mono);font-size:11.5px;color:var(--txt-faint)}
+.trace .step .b p{margin:3px 0 0;font-size:13px;color:var(--txt-dim)}
+.tracebtns{display:flex;gap:9px;margin-top:14px}
+.btn{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;border:none;padding:9px 18px;
+  border-radius:9px;font-family:var(--sans);font-weight:600;font-size:13.5px;cursor:pointer;transition:.15s}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:var(--panel);border:1px solid var(--border);color:var(--txt-dim)}
+
+/* ---------- misc ---------- */
+.checklist{list-style:none;padding:0;margin:14px 0}
+.checklist li{padding:9px 0 9px 32px;position:relative;border-bottom:1px solid var(--border-soft);font-size:14px}
+.checklist li:before{content:"✓";position:absolute;left:4px;top:9px;color:var(--green);font-weight:700}
+.footnav{display:flex;justify-content:space-between;margin-top:50px;padding-top:22px;border-top:1px solid var(--border-soft);gap:12px}
+.footnav button{flex:1;background:var(--panel);border:1px solid var(--border);color:var(--txt);padding:14px 18px;
+  border-radius:11px;cursor:pointer;font-family:var(--sans);font-size:14px;transition:.15s;text-align:left}
+.footnav button:hover{border-color:var(--brand);background:var(--panel-2)}
+.footnav button:disabled{opacity:.35;cursor:default}
+.footnav small{display:block;color:var(--txt-faint);font-size:11px;font-family:var(--mono)}
+.footnav .next{text-align:right}
+.kbd{font-family:var(--mono);font-size:11px;background:var(--panel-2);border:1px solid var(--border);
+  border-bottom-width:2px;border-radius:5px;padding:1px 7px}
+.suffix-chip{display:inline-block;font-family:var(--mono);font-size:12px;padding:5px 11px;border-radius:8px;
+  border:1px solid var(--border);background:var(--panel);margin:4px 4px 0 0;cursor:pointer;transition:.15s;color:var(--txt-dim)}
+.suffix-chip:hover,.suffix-chip.active{border-color:var(--accent);color:var(--txt);background:var(--panel-2)}
+#suffix-out{margin-top:12px;min-height:24px}
+.toc-inline{font-size:13px;color:var(--txt-dim);margin:2px 0}
+hr.soft{border:none;border-top:1px solid var(--border-soft);margin:30px 0}
+.mobile-top{display:none}
+@media(max-width:860px){
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .mobile-top{display:flex;position:sticky;top:0;z-index:20;background:var(--bg-2);
+    border-bottom:1px solid var(--border-soft);padding:10px 14px;gap:10px;align-items:center}
+  .mobile-top select{flex:1;background:var(--panel);color:var(--txt);border:1px solid var(--border);
+    border-radius:9px;padding:9px;font-family:var(--sans);font-size:14px}
+  .wrap{padding:22px 16px 90px}
+  h1{font-size:24px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">T</div>
+      <div><b>TNDS Feature Lab</b><span>flutter · riverpod · clean arch</span></div>
+    </div>
+    <div class="nav-progress">
+      <div class="bar"><i id="pbar"></i></div>
+      <small id="ptext">0% · เริ่มกันเลย</small>
+    </div>
+    <ul class="nav" id="nav"></ul>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="main">
+    <div class="mobile-top">
+      <div class="logo" style="width:32px;height:32px;border-radius:9px;font-size:15px;background:linear-gradient(135deg,var(--brand),var(--brand-2));display:grid;place-items:center;color:#fff;font-weight:700">T</div>
+      <select id="msel"></select>
+    </div>
+    <div class="wrap" id="content"><!-- sections injected --></div>
+  </main>
+</div>
+
+<!-- ====== RAW SNIPPETS (not parsed as HTML — angle brackets safe) ====== -->
+<script type="text/plain" id="s-category">import 'package:tnds_flutter_app/generated/locale_keys.g.dart';
+
+/// Value object (enum with behavior) — wire value + label key live ON the enum,
+/// so no switch statements get duplicated at call sites.
+enum ExpenseCategory {
+  food('FOOD', LocaleKeys.expense_category_food),
+  transport('TRANSPORT', LocaleKeys.expense_category_transport),
+  shopping('SHOPPING', LocaleKeys.expense_category_shopping),
+  entertainment('ENTERTAINMENT', LocaleKeys.expense_category_entertainment),
+  other('OTHER', LocaleKeys.expense_category_other);
+
+  const ExpenseCategory(this.wireValue, this.labelKey);
+
+  final String wireValue;   // backend representation — never shown to users
+  final String labelKey;    // locale key, resolved with .tr() in presentation
+
+  /// Tolerant parsing: unknown/missing wire value degrades to [other]
+  /// instead of crashing on a new backend category.
+  static ExpenseCategory from(String? value) => values.firstWhere(
+    (category) => category.wireValue == value,
+    orElse: () => other,
+  );
+}</script>
+
+<script type="text/plain" id="s-money">/// Value object — identity is its value, so it overrides ==/hashCode and
+/// carries same-currency math instead of leaking raw doubles around the app.
+/// Pure Dart: no flutter/riverpod/dio imports.
+class Money {
+  const Money({this.amount = 0, this.currency = defaultCurrency});
+
+  static const defaultCurrency = 'THB';   // defined once, never retyped
+
+  final double amount;
+  final String currency;
+
+  /// Same-currency addition; mixing currencies is a programming error.
+  Money operator +(Money other) {
+    if (currency != other.currency) {
+      throw ArgumentError('Cannot add $currency to ${other.currency}');
+    }
+    return Money(amount: amount + other.amount, currency: currency);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is Money && other.amount == amount && other.currency == currency;
+
+  @override
+  int get hashCode => Object.hash(amount, currency);
+}</script>
+
+<script type="text/plain" id="s-expense">import 'package:tnds_flutter_app/src/features/expense/domain/expense_category.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/money.dart';
+
+/// Entity — identified by [id]; composes the [Money] value object and the
+/// [ExpenseCategory] enum instead of carrying raw double/String fields.
+/// Domain rules: noun name, const constructor, non-nullable fields with defaults.
+class Expense {
+  const Expense({
+    this.id = '',
+    this.title = '',
+    this.category = ExpenseCategory.other,
+    this.money = const Money(),
+    this.date = '',
+  });
+
+  final String id;
+  final String title;
+  final ExpenseCategory category;
+  final Money money;
+
+  /// ISO-8601 date (2026-06-10) — kept as String so the constructor stays
+  /// const; parse to DateTime at the edge that needs calendar math.
+  final String date;
+}</script>
+
+<script type="text/plain" id="s-overview">import 'package:tnds_flutter_app/src/features/expense/domain/expense.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/expense_summary.dart';
+
+/// Read model — what the expense list renders: the expenses plus their summary,
+/// composed by ExpenseService to answer ONE query. Not an entity: it has no
+/// identity of its own, is never persisted or sent to the wire, and exists only
+/// as a named answer. True UI state (selected filter, form inputs) is NOT
+/// domain — it lives in controllers.
+class ExpenseOverview {
+  const ExpenseOverview({
+    this.expenses = const [],
+    this.summary = const ExpenseSummary(),
+  });
+
+  final List<Expense> expenses;
+  final ExpenseSummary summary;
+}</script>
+
+<script type="text/plain" id="s-cbs">/// Read model — one category's plan vs actuals, a node in the domain object
+/// graph. It holds the real [Budget] and [Expense] objects, not the id/code
+/// strings the wire used to relate them.
+///
+/// Where computation lives (the line juniors must see): folding a COLLECTION
+/// (summing [expenses] into [spent]) is use-case logic and happens in the
+/// Service. Deriving a value from fields this object ALREADY holds
+/// ([remaining], [utilization], [isOverBudget]) is intrinsic behavior and
+/// belongs HERE — same rule as Money.+.
+class CategoryBudgetStatus {
+  const CategoryBudgetStatus({
+    this.category = ExpenseCategory.other,
+    this.budget,
+    this.expenses = const [],
+    this.spent = const Money(),
+  });
+
+  final ExpenseCategory category;
+
+  /// Deliberately nullable: null is the meaningful state "money was spent with
+  /// no plan" — a default Budget() would silently read as a zero-limit plan.
+  final Budget? budget;
+  final List<Expense> expenses;
+  final Money spent;            // folded by BudgetService; never on the wire
+
+  bool get hasBudget => budget != null;
+
+  /// Negative when over budget; null when there is no plan to compare with.
+  Money? get remaining {
+    final budget = this.budget;
+    if (budget == null) return null;
+    return budget.limit - spent;
+  }
+
+  /// spent / limit. Null when no budget or the limit is zero — never /0.
+  double? get utilization {
+    final budget = this.budget;
+    if (budget == null || budget.limit.amount == 0) return null;
+    return spent.amount / budget.limit.amount;
+  }
+}</script>
+
+<script type="text/plain" id="s-dto">import 'package:json_annotation/json_annotation.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/expense.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/expense_category.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/money.dart';
+
+part 'get_expenses_response.g.dart';
+
+/// Response DTO: every field nullable (the wire is never trusted), nested DTOs
+/// need explicitToJson: true, and the to<Domain> getter is where nulls die —
+/// domain models receive non-null defaults and DTOs never leak past data/.
+@JsonSerializable(explicitToJson: true)
+class GetExpensesResponse {
+  const GetExpensesResponse({this.items});
+
+  final List<ExpenseItemResponse>? items;
+
+  factory GetExpensesResponse.fromJson(Map<String, dynamic> json) =>
+      _$GetExpensesResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GetExpensesResponseToJson(this);
+
+  List<Expense> get toExpenses =>
+      items?.map((item) => item.toExpense).toList() ?? const [];
+}
+
+@JsonSerializable()
+class ExpenseItemResponse {
+  const ExpenseItemResponse({this.id, this.title, this.category, this.amount,
+      this.currency, this.date});
+
+  final String? id;
+  final String? title;
+  final String? category;
+  final String? amount;      // amounts travel as String on the wire
+  final String? currency;
+  final String? date;
+
+  factory ExpenseItemResponse.fromJson(Map<String, dynamic> json) =>
+      _$ExpenseItemResponseFromJson(json);
+  Map<String, dynamic> toJson() => _$ExpenseItemResponseToJson(this);
+
+  /// The single place nulls die and wire-types become domain types.
+  Expense get toExpense => Expense(
+    id: id ?? '',
+    title: title ?? '',
+    category: ExpenseCategory.from(category),
+    money: Money(
+      amount: double.tryParse(amount ?? '') ?? 0,
+      currency: currency ?? Money.defaultCurrency,
+    ),
+    date: date ?? '',
+  );
+}</script>
+
+<script type="text/plain" id="s-repo">import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:tnds_flutter_app/src/exceptions/app_exception.dart';
+import 'package:tnds_flutter_app/src/features/expense/data/dto/request/create_expense_request.dart';
+import 'package:tnds_flutter_app/src/features/expense/data/dto/response/get_expenses_response.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/expense.dart';
+
+part 'expense_repository.g.dart';
+
+/// Concrete repository (no abstract interface — the Riverpod provider override
+/// is the only test/fake seam). Does I/O mapping ONLY: build request →
+/// "network" → parse response DTO → return a domain noun. Business logic
+/// belongs in ExpenseService.
+class ExpenseRepository {
+  ExpenseRepository();
+
+  Future<List<Expense>> getExpenses() async {
+    await _simulateNetwork();
+    final response = GetExpensesResponse.fromJson({'items': _records});
+    return response.toExpenses;          // DTO → domain, then return
+  }
+
+  Future<Expense> getExpense(String id) async {
+    await _simulateNetwork();
+    final record = _records.where((r) => r['id'] == id).firstOrNull;
+    // Typed exception, not a raw throw — callers type-check the failure mode.
+    if (record == null) throw ExpenseNotFoundException();
+    return GetExpenseResponse.fromJson({'item': record}).toExpense;
+  }
+
+  Future<Expense> createExpense(CreateExpenseRequest request) async {
+    await _simulateNetwork();
+    final record = <String, dynamic>{...request.toJson(), 'id': _nextId()};
+    _records.add(record);
+    return CreateExpenseResponse.fromJson({'item': record}).toExpense;
+  }
+}
+
+/// keepAlive: the repository is infrastructure — one instance owns the Dio
+/// client / data store for the whole app, not recreated per screen.
+@Riverpod(keepAlive: true)
+ExpenseRepository expenseRepository(Ref ref) => ExpenseRepository();</script>
+
+<script type="text/plain" id="s-service">import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:tnds_flutter_app/src/features/expense/data/expense_repository.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/expense.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/expense_overview.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/expense_summary.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/money.dart';
+
+part 'expense_service.g.dart';
+
+/// The application layer: plain class holding [Ref], a private _repo getter,
+/// domain-typed methods, exactly one @riverpod provider. EVERY repository call
+/// goes through here — controllers never read expenseRepositoryProvider, and
+/// @riverpod function providers that call a repository are forbidden.
+/// No Flutter imports at this altitude.
+class ExpenseService {
+  ExpenseService(this.ref);
+  final Ref ref;
+
+  ExpenseRepository get _repo => ref.read(expenseRepositoryProvider);
+
+  Future<ExpenseOverview> getExpenseOverview() async {
+    final expenses = await _repo.getExpenses();
+    return ExpenseOverview(expenses: expenses, summary: summarize(expenses));
+  }
+
+  /// Use-case logic lives at the service altitude — not in the repository
+  /// (I/O only) and not in widgets. Public so it is unit-testable and reusable
+  /// (the filtered list re-summarizes through this same method).
+  ExpenseSummary summarize(List<Expense> expenses) {
+    var total = const Money();
+    final totalByCategory = <ExpenseCategory, Money>{};
+    for (final expense in expenses) {
+      total = total + expense.money;
+      totalByCategory[expense.category] =
+          (totalByCategory[expense.category] ?? const Money()) + expense.money;
+    }
+    return ExpenseSummary(total: total, totalByCategory: totalByCategory);
+  }
+
+  /// Builds the request DTO HERE so presentation never sees DTO shapes —
+  /// controllers pass domain-typed named params only.
+  Future<Expense> createExpense({
+    required String title,
+    required ExpenseCategory category,
+    required String amount,
+  }) {
+    final request = CreateExpenseRequest(
+      title: title,
+      category: category.wireValue,
+      amount: amount,
+      currency: Money.defaultCurrency,
+      date: _today,                 // from injected clockProvider, not now()
+    );
+    return _repo.createExpense(request);
+  }
+}
+
+/// Auto-dispose (no keepAlive): a service is cheap, stateless use-case logic.
+@riverpod
+ExpenseService expenseService(Ref ref) => ExpenseService(ref);</script>
+
+<script type="text/plain" id="s-join">/// Builds the budget object graph from TWO endpoints. This is the layer where
+/// wire relationships become object relationships: the repositories return
+/// flat lists (budgets, expenses), and THIS class joins them per category,
+/// scopes expenses to the budget month, and folds the totals.
+class BudgetService {
+  BudgetService(this.ref);
+  final Ref ref;
+
+  BudgetRepository get _budgetRepo => ref.read(budgetRepositoryProvider);
+  ExpenseRepository get _expenseRepo => ref.read(expenseRepositoryProvider);
+
+  Future<BudgetOverview> getBudgetOverview() async {
+    final (budgets, expenses) = await _fetchBoth();
+    final month = budgets.firstOrNull?.month ?? '';
+
+    // The temporal half of the join. ISO-8601 makes "in this month" a plain
+    // prefix check ('2026-06-08' starts with '2026-06').
+    final monthExpenses =
+        expenses.where((e) => e.date.startsWith(month));
+
+    final budgetByCategory = {for (final b in budgets) b.category: b};
+
+    // UNION of both sides: a budget with no spending must show ("how much is
+    // left?") and spending with no budget must show ("what did we forget to
+    // plan?"). Inner-joining would silently drop both.
+    final categories = {...budgetByCategory.keys, ...byCat(monthExpenses).keys};
+    final statuses = [
+      for (final c in categories)
+        CategoryBudgetStatus(
+          category: c,
+          budget: budgetByCategory[c],
+          expenses: byCat(monthExpenses)[c] ?? const [],
+          spent: fold(byCat(monthExpenses)[c]),
+        ),
+    ]..sort(_compareStatuses);
+
+    return BudgetOverview(month: month, statuses: statuses);
+  }
+
+  /// Budgets and expenses are independent → fetch in PARALLEL with record .wait.
+  /// Caveat: .wait wraps failures in ParallelWaitError, so unwrap it or a typed
+  /// repository exception reaches AppException.parse as an UnknownException.
+  Future<(List<Budget>, List<Expense>)> _fetchBoth() async {
+    try {
+      return await (_budgetRepo.getBudgets(), _expenseRepo.getExpenses()).wait;
+    } on async.ParallelWaitError catch (e) {
+      final first = e.errors.$1 ?? e.errors.$2;
+      Error.throwWithStackTrace(first!.error, first.stackTrace);
+    }
+  }
+}</script>
+
+<script type="text/plain" id="s-controller">import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:tnds_flutter_app/src/features/expense/application/expense_service.dart';
+import 'package:tnds_flutter_app/src/features/expense/domain/expense_overview.dart';
+
+part 'expense_list_controller.g.dart';
+
+/// Read/Fetch controller — build() performs the load on screen entry; the
+/// screen just watches the resulting AsyncValue. Auto-disposed when the screen
+/// pops. Talks to the Service only, never the repository.
+@riverpod
+class ExpenseListController extends _$ExpenseListController {
+  @override
+  Future<ExpenseOverview> build() =>
+      ref.read(expenseServiceProvider).getExpenseOverview();
+}
+
+/// Derived provider — composes other providers with ref.watch (no repository
+/// access, so this is NOT a forbidden function provider). When either input
+/// changes (filter tapped, list reloaded), Riverpod recomputes this once and
+/// every watching widget rebuilds together.
+@riverpod
+AsyncValue<ExpenseOverview> filteredExpenseOverview(Ref ref) {
+  final overviewAsync = ref.watch(expenseListControllerProvider);
+  final filter = ref.watch(expenseFilterControllerProvider);
+
+  return overviewAsync.whenData((overview) {
+    if (filter == null) return overview;
+    final filtered =
+        overview.expenses.where((e) => e.category == filter).toList();
+    return ExpenseOverview(
+      expenses: filtered,
+      summary: ref.watch(expenseServiceProvider).summarize(filtered),
+    );
+  });
+}</script>
+
+<script type="text/plain" id="s-submit">/// Submit controller — build() returns null (idle); submit() drives the state
+/// through loading → data/error. AsyncValue.guard is mandatory: it funnels any
+/// thrown error into AsyncError so the screen's .when(error:) / ref.listen sees
+/// it — never a bare try/catch that swallows it.
+@riverpod
+class CreateExpenseController extends _$CreateExpenseController {
+  @override
+  Future<Expense?> build() async => null;
+
+  Future<void> submit({
+    required String title,
+    required ExpenseCategory category,
+    required String amount,
+  }) async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(
+      () => ref
+          .read(expenseServiceProvider)
+          .createExpense(title: title, category: category, amount: amount),
+    );
+  }
+}</script>
+
+<script type="text/plain" id="s-screen">/// List screen. The screen only gates the initial load (SystemAsyncValueWidget);
+/// _SummaryHeader and _ExpenseListView each ref.watch(filteredExpenseOverview),
+/// so one tap on a filter chip updates BOTH — single source of truth, no
+/// widget-to-widget syncing.
+class ExpenseListScreen extends ConsumerWidget {
+  const ExpenseListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final overviewAsync = ref.watch(expenseListControllerProvider);
+
+    return Scaffold(
+      appBar: CommonAppBar(
+        titleText: LocaleKeys.expense_list_title.tr(),
+        rightIcon: Icons.savings_outlined,
+        onClickIconRight: () =>
+            context.pushNamed(ExpenseRouter.budgetOverview.name),
+      ),
+      body: SafeArea(
+        child: SystemAsyncValueWidget<ExpenseOverview>(
+          value: overviewAsync,
+          onRefresh: () => ref.refresh(expenseListControllerProvider.future),
+          data: (_) => const _ExpenseListBody(),
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoryFilterChips extends ConsumerWidget {
+  const _CategoryFilterChips();
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selected = ref.watch(expenseFilterControllerProvider);
+    return Row(children: [
+      for (final category in ExpenseCategory.values)
+        ChoiceChip(
+          label: Text(category.labelKey.tr()),
+          selected: selected == category,
+          // ref.read in a callback — one state write fans out to every watcher.
+          onSelected: (_) => ref
+              .read(expenseFilterControllerProvider.notifier)
+              .select(category),
+        ),
+    ]);
+  }
+}</script>
+
+<script type="text/plain" id="s-listen">@override
+Widget build(BuildContext context) {
+  // ref.listen = side effects (navigation) — never inside .when(data:).
+  ref.listen(createExpenseControllerProvider, (previous, next) {
+    next.whenOrNull(
+      data: (expense) {
+        if (expense == null) return;        // idle state, not a result
+        // One invalidate re-runs the list load; every watcher of the list
+        // (and of the derived filtered provider) updates by itself.
+        ref.invalidate(expenseListControllerProvider);
+        context.pop();
+      },
+    );
+  });
+
+  final submitState = ref.watch(createExpenseControllerProvider);
+  // ... Form, fields, and a Save button disabled while submitState.isLoading
+}</script>
+
+<script type="text/plain" id="s-router">/// Route enum — name is derived by [TndsRouter] from [path], never hand-written.
+/// Navigate with context.pushNamed(ExpenseRouter.x.name).
+enum ExpenseRouter with TndsRouter {
+  expenseList,
+  expenseDetail,
+  createExpense,
+  budgetOverview;
+
+  @override
+  String get routerName => 'expense_router';
+
+  @override
+  String get path {
+    switch (this) {
+      case ExpenseRouter.expenseList:   return '/expense';
+      case ExpenseRouter.expenseDetail: return '/expense/detail';
+      case ExpenseRouter.createExpense: return '/expense/create';
+      case ExpenseRouter.budgetOverview:return '/expense/budget';
+    }
+  }
+}
+
+/// Spread into lib/src/router/app_router.dart — the app router never defines
+/// feature screens inline.
+final expenseRouter = <GoRoute>[
+  GoRoute(
+    path: ExpenseRouter.expenseDetail.path,
+    name: ExpenseRouter.expenseDetail.name,
+    // queryParameters (not extra) so the route survives deeplink re-entry;
+    // a missing id falls through to the controller's error state, no crash.
+    builder: (context, state) =>
+        ExpenseDetailScreen(expenseId: state.uri.queryParameters['id'] ?? ''),
+  ),
+];</script>
+
+<script type="text/plain" id="s-fake">/// implements (never extends) the concrete repository — same public surface,
+/// canned data. Injected in tests via
+/// overrideRepos: [expenseRepositoryProvider.overrideWith(...)].
+class FakeExpenseRepository implements ExpenseRepository {
+  FakeExpenseRepository({this.errorToThrow, List<Expense>? expenses})
+      : _expenses = expenses ?? kFakeExpenses;
+
+  final Object? errorToThrow;        // when set, every method throws it
+  final List<Expense> _expenses;
+  final List<CreateExpenseRequest> createdRequests = [];   // spy for asserts
+
+  @override
+  Future<List<Expense>> getExpenses() async {
+    if (errorToThrow != null) throw errorToThrow!;
+    return _expenses;
+  }
+
+  @override
+  Future<Expense> createExpense(CreateExpenseRequest request) async {
+    createdRequests.add(request);
+    return Expense(id: 'exp-created', title: request.title ?? '');
+  }
+}</script>
+
+<script type="text/plain" id="s-test">testWidgets('one filter tap updates the list AND the total together', (
+  tester,
+) async {
+  // Inject the fake through the provider override — never mock the provider.
+  await robot.pumpExpenseList(
+    overrideRepos: [
+      expenseRepositoryProvider.overrideWith((ref) => FakeExpenseRepository()),
+    ],
+  );
+
+  // Every interaction + assertion goes through the Robot — no tester.* /
+  // find.* in the test body. A missing helper means extending the Robot.
+  await robot.tapCategoryFilter(ExpenseCategory.food);
+
+  robot.expectTotal('THB 320.50');     // header recomputed
+  robot.expectExpenseCount(1);         // list filtered — both from ONE tap
+});</script>
+
+<script type="text/plain" id="s-tree">expense/
+├── domain/         # Expense, Budget, Money, ExpenseCategory   (entity / value object)
+│                   # ExpenseOverview, ExpenseSummary, CategoryBudgetStatus  (read model)
+├── data/
+│   ├── dto/request/    create_expense_request.dart
+│   ├── dto/response/   get_expenses_response.dart   (fromJson -> toExpense)
+│   ├── fake/           fake_expense_repository.dart (implements, for tests)
+│   └── expense_repository.dart    @Riverpod(keepAlive: true) + provider
+├── application/    expense_service.dart, budget_service.dart   (business logic)
+├── presentation/
+│   ├── *_controller.dart   talk to service only
+│   ├── *_screen.dart       widgets, AsyncValue.when
+│   └── widgets/            money_format.dart, expense_category_icon.dart
+└── router/         expense_router.dart   enum with TndsRouter</script>
+
+<!-- ====== APP SCRIPT ====== -->
+<script>
+/* ---------- syntax highlighter (run over escaped text) ---------- */
+const KW = new Set(('import part class enum extends implements with mixin abstract final const var void return if else for in while switch case default throw rethrow try catch on async await yield get set static factory this super true false null late required new operator typedef as is sealed').split(' '));
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(raw){
+  let out=''; const lines=raw.split('\n');
+  for(let line of lines){
+    out += hlLine(line)+'\n';
+  }
+  return out.replace(/\n$/,'');
+}
+function hlLine(line){
+  // comments first (whole rest of line)
+  const ci=line.indexOf('//');
+  // ensure // isn't inside a string — cheap check: count quotes before it
+  if(ci>=0){
+    const before=line.slice(0,ci);
+    const q=(before.match(/'/g)||[]).length;
+    if(q%2===0){
+      return hlCode(before)+'<span class="tok-c">'+esc(line.slice(ci))+'</span>';
+    }
+  }
+  return hlCode(line);
+}
+function hlCode(s){
+  let res='',i=0;
+  const tokenRe=/'(?:[^'\\]|\\.)*'|@\w+|\b\d+(?:\.\d+)?\b|[A-Za-z_$][\w$]*|\s+|[^\sA-Za-z_$]/g;
+  let m;
+  while((m=tokenRe.exec(s))!==null){
+    const t=m[0];
+    if(t[0]==="'"){res+='<span class="tok-s">'+esc(t)+'</span>';}
+    else if(t[0]==='@'){res+='<span class="tok-a">'+esc(t)+'</span>';}
+    else if(/^\d/.test(t)){res+='<span class="tok-n">'+esc(t)+'</span>';}
+    else if(/^[A-Za-z_$]/.test(t)){
+      if(KW.has(t)) res+='<span class="tok-k">'+esc(t)+'</span>';
+      else if(/^[A-Z]/.test(t)) res+='<span class="tok-t">'+esc(t)+'</span>';
+      else res+=esc(t);
+    } else {res+=esc(t);}
+  }
+  return res;
+}
+function snippet(id){
+  const el=document.getElementById(id);
+  return el?el.textContent.replace(/^\n/,'').replace(/\s+$/,''):'(missing '+id+')';
+}
+/* build a code card. hl = array of 0-based line indexes to highlight */
+function codeCard(file, snipId, hl){
+  hl=hl||[];
+  const raw=snippet(snipId);
+  const lines=highlight(raw).split('\n').map((l,idx)=>
+    hl.includes(idx)?'<span class="hl">'+(l||' ')+'</span>':l).join('\n');
+  const path=file.split('/'); const base=path.pop();
+  return `<div class="code">
+    <div class="bar2"><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="fname">${path.length?path.join('/')+'/':''}<b>${base}</b></span>
+      <button class="copy" data-snip="${snipId}">คัดลอก</button></div>
+    <pre><code>${lines}</code></pre></div>`;
+}
+
+/* ================= CONTENT ================= */
+const SECTIONS=[
+ {id:'intro', group:'เริ่มต้น', n:'0', title:'ภาพรวม & ปรัชญา', body: secIntro},
+ {id:'arch', group:'เริ่มต้น', n:'1', title:'สถาปัตยกรรม 4 ชั้น', body: secArch},
+ {id:'domain', group:'ลงมือสร้างทีละชั้น', n:'2', title:'Domain — ออกแบบ model', body: secDomain},
+ {id:'data', group:'ลงมือสร้างทีละชั้น', n:'3', title:'Data — DTO & Repository', body: secData},
+ {id:'app', group:'ลงมือสร้างทีละชั้น', n:'4', title:'Application — Service', body: secApp},
+ {id:'pres', group:'ลงมือสร้างทีละชั้น', n:'5', title:'Presentation — Controller & Screen', body: secPres},
+ {id:'router', group:'ลงมือสร้างทีละชั้น', n:'6', title:'Router — ผูกเส้นทาง', body: secRouter},
+ {id:'flow', group:'เข้าใจให้ลึก', n:'7', title:'ไล่ data flow 1 tap', body: secFlow},
+ {id:'state', group:'เข้าใจให้ลึก', n:'8', title:'Entity vs Read model vs UI state', body: secState},
+ {id:'naming', group:'เข้าใจให้ลึก', n:'9', title:'Naming conventions', body: secNaming},
+ {id:'test', group:'เข้าใจให้ลึก', n:'10', title:'Testing — Robot & Fake', body: secTest},
+ {id:'cheat', group:'สรุป', n:'✓', title:'Checklist & กฎทอง', body: secCheat},
+];
+
+/* ---- section bodies (functions returning HTML) ---- */
+function secIntro(){return `
+<p class="kicker">TNDS Flutter App Template</p>
+<h1>สร้าง Feature ให้ถูก "ท่า" ตั้งแต่ไฟล์แรก</h1>
+<p class="lead">คู่มือนี้พาเขียน feature หนึ่งตัวตั้งแต่ <b>domain</b> ไปจนถึง <b>หน้าจอ</b> และ <b>test</b>
+โดยใช้ฟีเจอร์ <code>expense</code> ในเรพอนี้เป็นตัวอย่างจริงทุกบรรทัด — พร้อมอธิบายว่า
+<i>"ทำไมต้องเขียนท่านี้"</i> ไม่ใช่แค่ "เขียนยังไง"</p>
+
+<div class="card">
+  <h3 style="margin-top:0">💡 ปรัชญาหลัก 3 ข้อ ที่อยู่เบื้องหลังทุกกฎ</h3>
+  <div class="grid cols-3" style="margin-top:14px">
+    <div class="why ok"><div class="h">①&nbsp; แยกตาม "เหตุผลที่จะเปลี่ยน"</div>
+      UI เปลี่ยนบ่อย, business rule เปลี่ยนปานกลาง, รูปแบบ API เปลี่ยนตาม backend — แต่ละอย่างเปลี่ยนคนละจังหวะ
+      จึงต้องอยู่คนละชั้น เพื่อให้แก้ที่หนึ่งไม่ลามไปพังอีกที่</div>
+    <div class="why"><div class="h">②&nbsp; ทิศพึ่งพาชี้เข้าหา domain</div>
+      โค้ดที่เปลี่ยนยากที่สุด (business model) ต้องไม่พึ่งโค้ดที่เปลี่ยนง่ายที่สุด (UI/HTTP)
+      domain จึงเป็น <b>pure Dart</b> ห้าม import flutter / riverpod / dio</div>
+    <div class="why"><div class="h">③&nbsp; แต่ละชั้นมี "ภาษา" ของตัวเอง</div>
+      data พูดภาษา wire (JSON, String, nullable) · domain พูดภาษา business (noun, type แน่น)
+      · presentation พูดภาษา UI (AsyncValue, widget) — แปลภาษากันที่ขอบเสมอ</div>
+  </div>
+</div>
+
+<h2>เราจะสร้างอะไร</h2>
+<p>ฟีเจอร์ <b>Expense</b> (บันทึกรายจ่าย): หน้า list + summary, หน้าเพิ่มรายการ, หน้า budget ที่ join 2 endpoint
+เข้าด้วยกัน — ครบทุก pattern ที่ feature จริงต้องใช้ เราจะไล่สร้าง <b>จากในออกนอก</b>:
+domain → data → application → presentation → router → test</p>
+
+<div class="why"><div class="h">🧭 ทำไมสร้างจาก domain ก่อน ไม่เริ่มจากหน้าจอ?</div>
+เพราะ domain คือสิ่งที่ทุกชั้นพึ่งพา ถ้าเริ่มจากหน้าจอ คุณจะเผลอออกแบบ model ให้ "หน้าตาเหมือนหน้าจอ" หรือ
+"เหมือน response" ซึ่งเป็นกับดักที่ทำให้ reuse ไม่ได้ การเริ่มจาก domain บังคับให้คิดเรื่อง business ก่อน UI</div>
+
+<p class="muted" style="margin-top:24px">เลื่อนเมนูซ้ายไปทีละขั้น หรือกดปุ่ม <span class="kbd">ถัดไป →</span> ด้านล่างสุดของแต่ละหน้า ·
+ใช้ลูกศร <span class="kbd">←</span> <span class="kbd">→</span> ก็ได้</p>
+`;}
+
+function secArch(){return `
+<p class="kicker">ขั้นที่ 1</p>
+<h1>สถาปัตยกรรม 4 ชั้น</h1>
+<p class="lead">กฎเหล็กข้อเดียวที่ครอบทุกอย่าง: <b>Controller → Service → Repository</b> เสมอ
+ทุก request วิ่งครบ 3 hop ไม่มีลัด คลิกแต่ละชั้นเพื่อกระโดดไปบทเรียนของชั้นนั้น</p>
+
+<div class="arch">
+  <div class="layer" data-l="pres" data-goto="pres">
+    <div class="lc">🖼️</div>
+    <div class="lt"><b>Presentation</b> &nbsp;<span class="pill pres">presentation/</span>
+      <p>หน้าจอ + Controller (<code>*_screen.dart</code>, <code>*_controller.dart</code>) · พูดภาษา UI: AsyncValue, widget, UI state</p>
+      <code>ห้าม import data/ · ห้ามอ่าน *RepositoryProvider</code></div>
+  </div>
+  <div class="arrow">▼ &nbsp;<b>ref.read(serviceProvider)</b> &nbsp;เรียกลงล่าง</div>
+  <div class="layer" data-l="app" data-goto="app">
+    <div class="lc">⚙️</div>
+    <div class="lt"><b>Application</b> &nbsp;<span class="pill app">application/</span>
+      <p>Service (<code>*_service.dart</code>) · ที่อยู่ของ business / use-case logic · ประกอบ read model, join, fold, สร้าง request DTO</p>
+      <code>plain class + Ref · 1 @riverpod provider · ไม่มี Flutter import</code></div>
+  </div>
+  <div class="arrow">▼ &nbsp;<b>ref.read(repositoryProvider)</b></div>
+  <div class="layer" data-l="data" data-goto="data">
+    <div class="lc">🔌</div>
+    <div class="lt"><b>Data</b> &nbsp;<span class="pill data">data/</span>
+      <p>Repository + DTO + Fake · I/O mapping อย่างเดียว: build request → network → <code>fromJson</code> → คืน domain noun</p>
+      <code>@Riverpod(keepAlive: true) · DTO ไม่หลุดออกนอกชั้นนี้</code></div>
+  </div>
+  <div class="arrow">▲ &nbsp;ทุกชั้นพึ่งพา &nbsp;<b>domain</b>&nbsp; (pure Dart)</div>
+  <div class="layer" data-l="dom" data-goto="domain">
+    <div class="lc">💎</div>
+    <div class="lt"><b>Domain</b> &nbsp;<span class="pill dom">domain/</span>
+      <p>Entity · Value object · Read model — คำนาม pure Dart ที่ทุกชั้นใช้ร่วมกัน</p>
+      <code>ห้าม import flutter / riverpod / dio · const constructor</code></div>
+  </div>
+</div>
+
+<div class="why"><div class="h">🎯 ทำไมต้อง 3 hop เป๊ะ ไม่ให้ controller เรียก repository ตรง ๆ?</div>
+ถ้า controller เรียก repository ได้ "เมื่อ logic ยังง่าย" สุดท้าย business rule จะกระจายไปอยู่ในหน้าจอหลายที่
+พอ rule เปลี่ยน (เช่นวิธีคิด summary) ต้องไล่แก้ทุกหน้าจอ และ test ก็ต้อง pump widget เพื่อทดสอบ logic ธรรมดา ๆ
+<br>การบังคับให้ผ่าน Service เสมอ = มี "ที่เดียว" สำหรับ business logic, unit-test ได้โดยไม่ต้องมี UI, และ
+repository ถูกเปลี่ยน (เช่นเปลี่ยน Dio client) โดยหน้าจอไม่รู้เรื่อง</div>
+
+<h2>Layout ของ feature หนึ่งตัว</h2>
+${codeCard('lib/src/features/expense/','s-tree')}
+<p class="muted">ทุก feature หน้าตาเหมือนกันหมด เปิดของเพื่อนแล้วรู้ทันทีว่าอะไรอยู่ตรงไหน</p>
+`;}
+
+function secDomain(){return `
+<p class="kicker">ขั้นที่ 2 · ลงมือชั้นแรก</p>
+<h1>Domain — ออกแบบ model แบบ OOP</h1>
+<p class="lead">domain คือหัวใจ เริ่มที่นี่เสมอ กฎ 4 ข้อ: ชื่อเป็น <b>คำนาม</b> · <b>const</b> constructor ·
+field <b>non-nullable มี default</b> · <b>ห้าม</b> import flutter/riverpod/dio</p>
+
+<h2>2.1 — Value object: ห่อค่าดิบให้มีพฤติกรรม</h2>
+<p>อย่าส่ง <code>double amount</code> กับ <code>String currency</code> ลอย ๆ ไปทั่วแอป — ห่อมันเป็น <code>Money</code>
+ที่ "เท่ากันด้วยค่า" และพกการบวกลบของตัวเองมาด้วย</p>
+${codeCard('domain/money.dart','s-money',[2,3,4,12,18,19,20,21])}
+<div class="why"><div class="h">ทำไมต้อง override <code>==</code> / <code>hashCode</code>?</div>
+value object คือสิ่งที่ "ค่าเท่ากัน = เป็นสิ่งเดียวกัน" — <code>Money(100,'THB')</code> สองตัวต้องเท่ากัน
+ถ้าไม่ override Dart จะเทียบด้วย reference (คนละ object = ไม่เท่า) ทำให้ test, การใช้เป็น Map key,
+และการ rebuild ของ Riverpod พังหมด</div>
+<div class="why ok"><div class="h">ทำไม <code>operator +</code> เช็ค currency แล้ว throw?</div>
+การบวกเงินคนละสกุลคือ bug เสมอ — ดักไว้ที่ domain ให้ดังตั้งแต่ตอน dev ดีกว่าปล่อยให้ได้ตัวเลขผิดเงียบ ๆ
+ออกไปถึงหน้าจอ behavior แบบนี้ ("intrinsic") อยู่บน object ได้เพราะคำนวณจาก field ของตัวเองล้วน ๆ</div>
+
+<h2>2.2 — Enum with behavior: ฆ่า switch ซ้ำซาก</h2>
+${codeCard('domain/expense_category.dart','s-category',[5,6,7,8,9,13,14,19,20,21,22])}
+<div class="why"><div class="h">ทำไม <code>wireValue</code> / <code>labelKey</code> อยู่ "บน" enum?</div>
+ถ้าไม่ทำแบบนี้ คุณจะเขียน <code>switch(category){ case food: return 'FOOD' }</code> ซ้ำทุกที่ที่ต้องแปลงค่า —
+แปลง 1 → wire, แปลง 1 → label, แปลง 1 → ไอคอน กระจายเป็น 3 switch ที่ต้องแก้พร้อมกันเมื่อเพิ่มหมวด
+การแขวนข้อมูลไว้บน enum ทำให้เพิ่มหมวดใหม่ = แก้ที่เดียว (เพิ่ม 1 บรรทัดใน enum)</div>
+<div class="why warn"><div class="h">⚠️ ทำไม <code>IconData</code> ถึง <i>ไม่</i> อยู่บน enum นี้?</div>
+<code>IconData</code> เป็น Flutter type — domain ต้อง pure จึงห้ามเข้า ไอคอนเลยไปอยู่เป็น extension ฝั่ง
+<code>presentation/widgets/expense_category_icon.dart</code> แทน เช่นเดียวกับ <code>Money.formatted</code>
+(ใช้ <code>NumberFormat</code> จาก intl) ที่อยู่ฝั่ง presentation — <b>กฎ:</b> behavior ที่ต้องพึ่ง type นอก domain
+ให้ย้ายไปเป็น extension ที่ชั้นที่มี dependency นั้น</div>
+
+<h2>2.3 — Entity: สิ่งที่มี "ตัวตน" (identity)</h2>
+${codeCard('domain/expense.dart','s-expense',[3,4,5,6,16,21,22,23])}
+<div class="why"><div class="h">ทำไม Entity ประกอบจาก <code>Money</code> + <code>ExpenseCategory</code> แทน field ดิบ?</div>
+นี่คือหัวใจของ "design entity ให้ reuse ได้": <code>Expense</code> ไม่รู้วิธีบวกเงินหรือแปลง category เอง —
+มันแค่ <i>ประกอบ</i> value object ที่รู้เรื่องนั้นอยู่แล้ว พฤติกรรมจึงอยู่ที่เดียว (ใน <code>Money</code>) และ entity
+ทุกตัวที่ถือเงินก็ reuse ได้ทันที = องค์ประกอบ (composition) ทำให้ขยายได้โดยไม่ทำซ้ำ</div>
+<div class="why ok"><div class="h">ทำไม field ต้อง non-nullable + มี default?</div>
+เพราะ "ที่ที่ null ตาย" คือ DTO mapper (ดูขั้นถัดไป) ไม่ใช่ทั้งแอป พอ domain การันตีว่าไม่มี null แล้ว
+หน้าจอกับ service ก็ไม่ต้องเขียน <code>?.</code> / <code>??</code> เต็มไปหมด · default ยังทำให้ const constructor เป็นไปได้
+ซึ่งจำเป็นต่อการเทียบค่าและ performance</div>
+
+<h2>2.4 — Read model: "คำตอบของ 1 คำถาม"</h2>
+<p>นี่คือ model อีกบทบาทที่ <b>อยู่โฟลเดอร์ domain เดียวกัน</b> แต่ไม่ใช่ entity — มันคือผลลัพธ์ที่ Service ประกอบขึ้น
+เพื่อตอบ query หนึ่ง สังเกต suffix <code>*Overview</code> / <code>*Summary</code> / <code>*Status</code></p>
+${codeCard('domain/expense_overview.dart','s-overview',[3,4,5,6,7,8])}
+<div class="why"><div class="h">Read model ต่างจาก Entity ยังไง? (เส้นแบ่งที่สำคัญที่สุดในบทนี้)</div>
+<b>Entity</b> มี identity ของตัวเอง (<code>Expense.id</code>), ถูก persist/ส่ง wire, มีอายุยืน ·
+<b>Read model</b> ไม่มี identity, ไม่เคยขึ้น wire, เกิดมาเพื่อตอบ query เดียวแล้วตาย เช่น <code>ExpenseOverview</code>
+= "หน้า list ต้องแสดงอะไร" = expenses + summary มัดรวมเป็น noun เดียวที่ controller expose ออกมา<br>
+👉 รายละเอียดเต็ม + บทบาทที่ 3 (UI state) อยู่ในบท <a data-goto="state">Entity vs Read model vs UI state</a></div>
+
+<h2>2.5 — Read model เป็น "node ใน object graph" ได้</h2>
+<p>read model ขั้นสูง: ถือ object จริงของ entity อื่น และมี derived getter ของตัวเอง</p>
+${codeCard('domain/category_budget_status.dart','s-cbs',[5,6,7,8,9,10,11,21,22,23,33,34,35,36,37])}
+<div class="why warn"><div class="h">เส้นแบ่งที่ junior ต้องเห็น: คำนวณตรงไหนทำที่ไหน</div>
+• <b>fold ข้าม collection</b> (รวม <code>expenses</code> เป็น <code>spent</code>) = use-case logic → ทำใน <b>Service</b><br>
+• <b>derive จาก field ที่ object ถืออยู่แล้ว</b> (<code>remaining</code>, <code>utilization</code>) = พฤติกรรมในตัว → เป็น <b>getter ใน domain</b><br>
+กฎเดียวกับ <code>Money.+</code> เป๊ะ — ถ้าต้องวน collection คนอื่นมารวม = ออกไป Service</div>
+<div class="why"><div class="h">ทำไม <code>budget</code> ตัวเดียวที่ยอมให้ nullable?</div>
+เพราะ <code>null</code> ที่นี่ "มีความหมาย" — แปลว่า "มีการใช้เงินโดยไม่มีแผนงบ" ถ้าใส่ default <code>Budget()</code>
+มันจะอ่านเป็น "แผนงบ = 0 บาท" ซึ่งคนละเรื่องกัน นี่คือ <i>การจงใจแหกกฎ non-nullable</i> เพราะกฎมีไว้รับใช้ความหมาย ไม่ใช่ในทางกลับกัน</div>
+`;}
+
+function secData(){return `
+<p class="kicker">ขั้นที่ 3</p>
+<h1>Data — DTO & Repository</h1>
+<p class="lead">ชั้นนี้พูดภาษา wire (JSON nullable, String) และมีหน้าที่เดียว: <b>I/O mapping</b> —
+แปลง request, ยิง network, parse response, คืน <b>domain noun</b> ออกไป business logic <u>ห้าม</u>อยู่ที่นี่</p>
+
+<h2>3.1 — Response DTO: ที่ที่ "null ตาย"</h2>
+${codeCard('data/dto/response/get_expenses_response.dart','s-dto',[5,6,7,8,9,10,12,38,39,40,41,42,43,44,45,46,47,48])}
+<div class="why"><div class="h">ทำไมทุก field ใน DTO ต้อง nullable?</div>
+เพราะ <b>wire ไม่เคยเชื่อถือได้</b> — backend อาจส่ง field ขาด, null, หรือ type เพี้ยน การประกาศ nullable
+บังคับให้คุณ "ตัดสินใจเรื่อง null อย่างชัดเจน" ที่ getter <code>toExpense</code> ซึ่งเป็น <b>จุดเดียว</b>ที่ null ตาย
+และ wire-type (String amount) กลายเป็น domain-type (double) พอข้ามเส้นนี้ไปแล้วทั้งแอปไม่มี null อีก</div>
+<div class="why ok"><div class="h">ทำไม DTO ต้องไม่หลุดออกนอก <code>data/</code>?</div>
+ถ้า <code>ExpenseItemResponse</code> (nullable เต็มไปหมด) หลุดไปถึงหน้าจอ ทุก widget จะต้องเช็ค null เอง และพอ
+backend เปลี่ยนชื่อ field หน้าจอพังตาม การกั้น DTO ไว้ในชั้น data = backend เปลี่ยน wire ได้โดยแก้แค่ mapper ที่เดียว</div>
+
+<h2>3.2 — Repository: I/O เท่านั้น + ประกาศ provider</h2>
+${codeCard('data/expense_repository.dart','s-repo',[8,9,10,11,12,13,18,19,20,21,22,23,24,38,39,40,41])}
+<div class="why"><div class="h">🔑 ทำไมประกาศ <code>@Riverpod</code> provider ไว้ "ใน" ไฟล์ repository?</div>
+เพราะ provider คือ "วิธีเดียวที่คนอื่นจะได้ repository ตัวนี้มาใช้" — มันเป็นส่วนหนึ่งของ public API ของ repository
+ไม่ใช่ของแยกต่างหาก วางไว้ที่เดียวกันทำให้: (1) เห็น lifetime ของ repository คู่กับ class เลย
+(2) ไม่มีไฟล์ "providers.dart" รวมศูนย์ที่บวมและเป็นจุดชนกันเวลา merge
+(3) <b>provider override คือ test seam เดียว</b> — เราจึงไม่ต้องเขียน abstract interface ให้ repository
+แค่ <code>overrideWith(FakeExpenseRepository())</code> ก็สลับเป็นของปลอมได้</div>
+<div class="why"><div class="h">ทำไม repository ต้อง <code>keepAlive: true</code> แต่ service ไม่?</div>
+repository เป็น <b>infrastructure</b> — มันถือ Dio client / connection / data store ที่ควรมีตัวเดียวทั้งแอป
+ไม่ใช่สร้างใหม่ทุกครั้งที่เปิดหน้าจอ จึง keepAlive · ส่วน service เป็น logic ไร้ state ราคาถูก สร้าง-ทิ้งตามหน้าจอได้
+(auto-dispose) · <b>กฎ:</b> keepAlive = Dio/repository/storage/router/session · auto-dispose = service/screen controller</div>
+<div class="why warn"><div class="h">⚠️ Repository ใหม่ = ต้องถาม user ว่าใช้ Dio client ตัวไหน</div>
+ในแอปจริง repository จะ extend base แล้ว inject Dio client (<code>viperaDio</code> / <code>mymoMsDio</code> / ...) —
+ตัวเลือกนี้เป็น <b>crypto contract ของ backend</b> เดาจาก API spec ไม่ได้ และห้าม copy ของ repo ข้าง ๆ
+ต้องถาม user ด้วย AskUserQuestion เสมอ (ดู <code>references/dio-clients.md</code>)</div>
+
+<h2>3.3 — Typed exception แทน throw ดิบ</h2>
+<p>สังเกตบรรทัด <code>throw ExpenseNotFoundException()</code> — ไม่ใช่ <code>throw 'not found'</code></p>
+<div class="why"><div class="h">ทำไมต้อง typed?</div>
+เพราะ caller ต้อง "เช็คชนิดความผิดพลาดด้วย type" (<code>is ExpenseNotFoundException</code>) ไม่ใช่ string-match ข้อความ
+และ <code>CommonErrorWidget</code> จะ render title/description ที่ localized ของ exception นั้นได้เอง · exception ทุกตัวเป็น
+subclass ของ <code>AppException</code> (sealed) อยู่รวมที่ <code>lib/src/exceptions/app_exception.dart</code></div>
+`;}
+
+function secApp(){return `
+<p class="kicker">ขั้นที่ 4 · หัวใจของ business</p>
+<h1>Application — Service class</h1>
+<p class="lead">ที่อยู่ของ <b>use-case logic</b> ทั้งหมด · plain class ถือ <code>Ref</code> · มี <code>_repo</code> getter ส่วนตัว ·
+method คืน domain type · <b>1 @riverpod provider</b> · ไม่มี Flutter import</p>
+
+${codeCard('application/expense_service.dart','s-service',[9,10,11,12,13,14,15,18,28,29,30,31,32,33,34,35,36,42,43,44,45,46,47])}
+
+<div class="why"><div class="h">🔑 ทำไม business logic ต้องอยู่ใน Service class — ไม่ใช่ใน controller หรือ repository?</div>
+<b>ไม่ใส่ใน repository</b> เพราะ repository ผูกกับ I/O (network, JSON) ถ้าเอา logic ไปไว้ การ unit-test logic
+ต้อง mock network และ logic จะผูกกับ "วิธีดึงข้อมูล" แทนที่จะเป็นกฎ business บริสุทธิ์<br>
+<b>ไม่ใส่ใน controller/widget</b> เพราะ logic จะกระจายตามหน้าจอ ทดสอบต้อง pump UI และ reuse ข้ามหน้าจอไม่ได้<br>
+<b>ใส่ใน Service</b> = มีที่เดียวสำหรับ "แอปนี้ทำอะไรได้บ้าง", unit-test ด้วย <code>ProviderContainer</code> เปล่า ๆ ได้,
+และทุกหน้าจอเรียก use-case เดิมซ้ำได้ (เช่น <code>summarize()</code> ถูกเรียกทั้งตอนโหลดและตอน filter)</div>
+
+<div class="why"><div class="h">ทำไม <code>summarize()</code> เป็น <code>public</code> ไม่ใช่ private?</div>
+เพราะมันถูก <b>reuse</b> 2 ที่: ตอนสร้าง overview ปกติ และตอนหน้า list filter แล้วต้องรวมยอดใหม่จาก list ที่กรองแล้ว
+(ดู derived provider ในบท presentation) · public ยังทำให้ unit-test ตรง ๆ ได้โดยไม่ต้องผ่าน network</div>
+
+<div class="why ok"><div class="h">ทำไม service เป็นคนสร้าง request DTO ไม่ใช่หน้าจอ?</div>
+ดู <code>createExpense({required title, category, amount})</code> — รับ param แบบ <b>domain</b> (ExpenseCategory)
+แล้วประกอบ <code>CreateExpenseRequest</code> ข้างใน · หน้าจอจึง "ไม่เคยเห็น" รูปร่าง DTO เลย พอ wire เปลี่ยน
+(เพิ่ม field, เปลี่ยนชื่อ) แก้แค่ service ที่เดียว หน้าจอไม่กระดิก</div>
+
+<h2>4.1 — เมื่อ 1 หน้าจอต้อง join หลาย endpoint</h2>
+<p>นี่คือเหตุผลที่ Service ทรงพลัง: <code>BudgetService</code> อ่าน <b>2 repository</b> แล้ว join เป็น object graph
+ที่ไม่มี response ตัวไหนหน้าตาเหมือน</p>
+${codeCard('application/budget_service.dart','s-join',[0,1,2,3,4,18,19,20,21,22,23,24,29,30,31,32,33])}
+<div class="why"><div class="h">ทำไม join ต้องเกิดที่ Service ไม่ใช่ที่ backend หรือหน้าจอ?</div>
+backend ส่ง list แบน ๆ (budgets, expenses) แยกกัน · <b>Service คือคนเดียวที่รู้ความสัมพันธ์</b>:
+จับคู่ budget↔expenses ต่อหมวด, กรอง expense ตามเดือน, fold ยอด spent · ทำที่ service แล้วหน้าจอได้
+<code>BudgetOverview</code> สำเร็จรูปมา render ตรง ๆ ไม่ต้องคำนวณเอง = test logic การ join ได้โดยไม่มี UI</div>
+<div class="why warn"><div class="h">⚠️ 2 บทเรียนซ่อนใน <code>_fetchBoth</code></div>
+(1) ยิง 2 endpoint <b>ขนาน</b>ด้วย record <code>.wait</code> เพราะมันไม่ขึ้นต่อกัน — เร็วกว่ายิงทีละตัว ·
+(2) <code>.wait</code> ห่อ error ใน <code>ParallelWaitError</code> ต้อง <b>unwrap</b> ไม่งั้น typed <code>AppException</code>
+จะกลายเป็น <code>UnknownException</code> บนจอ — UI เสียข้อความ localized เฉพาะของมันไป</div>
+
+<div class="why"><div class="h">"1 repo ต่อ 1 service" หรือเปล่า? — ไม่ใช่</div>
+กฎคือ "<b>ทุกการเข้าถึง repository ต้องผ่าน service</b>" ไม่ใช่ "service ละ repo เดียว" · service อ่านได้หลาย
+repository ตามต้องการ (เหมือน <code>BudgetService</code> อ่าน 2 ตัว) ขอแค่ presentation อย่าแตะ repository ตรง</div>
+`;}
+
+function secPres(){return `
+<p class="kicker">ขั้นที่ 5</p>
+<h1>Presentation — Controller & Screen</h1>
+<p class="lead">หน้าจอพูดภาษา UI: <code>AsyncValue</code>, widget, UI state · controller เรียก <b>service เท่านั้น</b> ·
+กฎ ref: <code>watch</code> ใน build · <code>read</code> ใน callback · <code>listen</code> สำหรับ side effect</p>
+
+<h2>5.1 — Read controller: โหลดตอนเข้าหน้า</h2>
+${codeCard('presentation/expense_list_controller.dart','s-controller',[7,8,9,10,11,12,13,14,15,18,19,20,21])}
+<div class="why"><div class="h">ทำไม controller บางลงจนเหลือบรรทัดเดียวใน <code>build()</code>?</div>
+เพราะ logic ทั้งหมดไปอยู่ใน service แล้ว · controller มีหน้าที่แค่ "เชื่อม widget เข้ากับ use-case" และจัดการ
+async state ผ่าน <code>AsyncValue</code> · มันเป็น auto-dispose: พอ pop หน้าจอ state ถูกทิ้ง โหลดใหม่เมื่อเข้าใหม่</div>
+
+<h3>Derived provider — compose โดยไม่แตะ repository</h3>
+<div class="why ok"><div class="h">ทำไม <code>filteredExpenseOverview</code> เป็น function provider ได้ ทั้งที่กฎห้าม function provider?</div>
+กฎห้ามคือ "<code>@riverpod</code> function provider ที่ <b>เรียก repository</b>" · ตัวนี้ไม่แตะ repository เลย
+มันแค่ <code>ref.watch</code> provider อื่น (controller + filter) มา compose · พอ input ตัวใดเปลี่ยน Riverpod คำนวณใหม่ครั้งเดียว
+แล้วทุก widget ที่ watch อยู่ rebuild พร้อมกัน — นี่คือกลไก <b>single source of truth</b></div>
+
+<h2>5.2 — Submit controller: idle → loading → data/error</h2>
+${codeCard('presentation/create_expense_controller.dart','s-submit',[0,1,2,3,4,5,11,12,13,14,15,16,17])}
+<div class="why warn"><div class="h">🔑 ทำไม <code>AsyncValue.guard</code> ถึง "บังคับ" ไม่ใช่ try/catch?</div>
+<code>AsyncValue.guard(() => ...)</code> จับ error ที่ throw ออกมาแล้วแปลงเป็น <code>AsyncError</code> โดยอัตโนมัติ
+ทำให้หน้าจอเห็นผ่าน <code>.when(error:)</code> / <code>ref.listen</code> และ <code>AsyncErrorLogger</code> log ขึ้น Crashlytics เอง<br>
+ถ้าใช้ <code>try/catch</code> เปล่า ๆ คุณเสี่ยง "กลืน" error เงียบ ๆ — UI ค้างที่ loading, logger ไม่เห็น, ผู้ใช้งงว่าทำไมไม่มีอะไรเกิด</div>
+
+<h2>5.3 — Screen: single source of truth ของจริง</h2>
+${codeCard('presentation/expense_list_screen.dart','s-screen',[0,1,2,3,4,29,30,31,32,33,34,35,36])}
+<div class="why"><div class="h">ทำไม <code>_SummaryHeader</code> กับ <code>_ExpenseListView</code> ต่างคน <code>watch</code> provider เดียวกัน?</div>
+เพราะกด filter chip ครั้งเดียว = เขียน state ที่ <b>ที่เดียว</b> (<code>select()</code>) แล้วทั้งยอดรวม (header) และ
+รายการ (list) อัปเดต <b>พร้อมกันเอง</b> — ไม่ต้องเขียนโค้ด sync widget→widget เลย · ถ้า header กับ list ถือ state
+คนละก๊อปกัน คุณจะต้องเขียน callback ให้สองตัวคุยกันเอง ซึ่งเป็นบ่อเกิดของบั๊ก "ตัวเลขไม่ตรงกับรายการ"</div>
+<div class="why"><div class="h">ทำไม sub-widget เป็น <code>class _Foo</code> ไม่ใช่ <code>Widget _buildFoo()</code>?</div>
+widget class แต่ละตัวมี <code>const</code> constructor และ rebuild แยกกันได้ — Riverpod/Flutter ข้าม rebuild
+ตัวที่ data ไม่เปลี่ยนได้ · method <code>_buildX()</code> rebuild ทั้งก้อนเสมอและไม่มี const นี่เป็นกฎใน widget conventions</div>
+
+<h2>5.4 — side effect ผ่าน <code>ref.listen</code> เท่านั้น</h2>
+${codeCard('presentation/create_expense_screen.dart','s-listen',[1,2,3,4,5,6,7,8,9,10,11,12])}
+<div class="why"><div class="h">ทำไม navigate/pop ต้องอยู่ใน <code>ref.listen</code> ไม่ใช่ <code>.when(data:)</code>?</div>
+<code>.when(data:)</code> ถูกเรียกทุก rebuild — ถ้า <code>context.pop()</code> อยู่ในนั้นจะ pop ซ้ำหลายรอบ · <code>ref.listen</code>
+ยิง callback เฉพาะตอน state <i>เปลี่ยน</i> จริง ๆ เหมาะกับ side effect (navigate, snackbar) · สังเกตด้วยว่า submit สำเร็จ
+แค่ <code>invalidate(expenseListControllerProvider)</code> ครั้งเดียว หน้า list ก็โหลดใหม่เองเพราะยัง watch provider เดิมอยู่</div>
+`;}
+
+function secRouter(){return `
+<p class="kicker">ขั้นที่ 6</p>
+<h1>Router — ผูกเส้นทางแบบ enum</h1>
+<p class="lead">navigate ด้วย <b>enum</b> เท่านั้น ห้าม path string ดิบ · route ของ feature อยู่ในไฟล์ตัวเอง
+แล้ว spread เข้า app router กลาง</p>
+${codeCard('router/expense_router.dart','s-router',[0,1,2,3,4,5,6,7,8,9,29,30,31,32,33,34,35])}
+<div class="why"><div class="h">ทำไม navigate ด้วย <code>ExpenseRouter.x.name</code> ไม่ใช่ <code>context.push('/expense/create')</code>?</div>
+path string ดิบกระจายทั่ว codebase — พอเปลี่ยน path ต้องไล่ find-replace และพิมพ์ผิดไม่มีใครเตือน ·
+enum <code>with TndsRouter</code> ทำให้ <code>name</code> ถูก derive จาก <code>path</code> อัตโนมัติ, autocomplete ช่วย,
+และเปลี่ยน path แก้ที่เดียวใน enum</div>
+<div class="why warn"><div class="h">ทำไม deeplink param ต้องส่งผ่าน <code>queryParameters</code> ไม่ใช่ <code>extra</code>?</div>
+<code>extra</code> เป็น object ใน memory — พอ user กด deeplink เข้ามาใหม่ (cold start, แชร์ลิงก์) <code>extra</code> หายหมด
+แต่ <code>queryParameters</code> อยู่ใน URL จึงรอด re-entry · สังเกต <code>?? ''</code>: id หายก็ไม่ crash แต่ตกไป error state
+ของ controller แทน</div>
+<div class="why ok"><div class="h">navigate จาก service/controller (ไม่มี context) ทำยังไง?</div>
+ใช้ <code>ref.read(goRouterProvider)</code> — router เองก็เป็น keepAlive provider ตัวหนึ่ง เข้าถึงได้ทุกที่ที่มี <code>ref</code></div>
+`;}
+
+function secFlow(){return `
+<p class="kicker">เข้าใจให้ลึก</p>
+<h1>ไล่ data flow: กด "Save" 1 ครั้ง</h1>
+<p class="lead">เห็นภาพว่า 1 tap วิ่งผ่านทั้ง 4 ชั้นยังไง แล้วเด้งกลับมา refresh หน้า list ได้เองอย่างไร
+กด <b>▶ เล่น</b> เพื่อไล่ทีละ hop</p>
+
+<div class="trace" id="trace">
+  <div class="step"><div class="num">1</div><div class="b"><span class="pill pres">presentation</span>
+    <b> _submit() ใน screen</b> <code>create_expense_screen.dart</code>
+    <p>validate form ผ่าน → <code>ref.read(controller.notifier).submit(...)</code> · <b>read</b> ใน callback ไม่ใช่ watch</p></div></div>
+  <div class="step"><div class="num">2</div><div class="b"><span class="pill pres">presentation</span>
+    <b> Controller.submit()</b> <code>create_expense_controller.dart</code>
+    <p><code>state = loading()</code> → <code>state = await AsyncValue.guard(() =&gt; service.createExpense(...))</code></p></div></div>
+  <div class="step"><div class="num">3</div><div class="b"><span class="pill app">application</span>
+    <b> Service.createExpense()</b> <code>expense_service.dart</code>
+    <p>รับ param แบบ domain → ประกอบ <code>CreateExpenseRequest</code> (วันที่จาก <code>clockProvider</code>) → เรียก <code>_repo.createExpense()</code></p></div></div>
+  <div class="step"><div class="num">4</div><div class="b"><span class="pill data">data</span>
+    <b> Repository.createExpense()</b> <code>expense_repository.dart</code>
+    <p>ยิง "network" → <code>CreateExpenseResponse.fromJson(...)</code> → <code>.toExpense</code> คืน <b>domain noun</b> ขึ้นไป</p></div></div>
+  <div class="step"><div class="num">5</div><div class="b"><span class="pill dom">domain</span>
+    <b> ได้ Expense กลับ</b> <code>domain/expense.dart</code>
+    <p>noun pure Dart ไหลย้อนขึ้น: data → service → controller · <code>guard</code> ห่อเป็น <code>AsyncData(expense)</code></p></div></div>
+  <div class="step"><div class="num">6</div><div class="b"><span class="pill pres">presentation</span>
+    <b> ref.listen เห็นผลสำเร็จ</b> <code>create_expense_screen.dart</code>
+    <p><code>ref.invalidate(expenseListControllerProvider)</code> + <code>context.pop()</code> · หน้า list โหลดใหม่ <b>เอง</b> เพราะยัง watch provider เดิม</p></div></div>
+</div>
+<div class="tracebtns">
+  <button class="btn" id="tplay">▶ เล่น</button>
+  <button class="btn ghost" id="treset">รีเซ็ต</button>
+</div>
+
+<div class="why" style="margin-top:26px"><div class="h">จุดสวยงามของสถาปัตยกรรมนี้</div>
+สังเกต hop 3→4: ถ้าวันหนึ่งเปลี่ยนจาก "network จำลอง" เป็น Dio จริง คุณแก้แค่ <b>ข้างใน repository</b> —
+hop 1, 2, 3, 5, 6 และทุกหน้าจอ <b>ไม่ต้องแตะเลย</b> เพราะแต่ละชั้นคุยกันด้วย domain type ไม่ใช่รายละเอียดการ implement</div>
+<div class="why ok"><div class="h">และทำไมหน้า list refresh เองได้โดยไม่ต้องส่งข้อมูลกลับ?</div>
+เพราะหน้า list <code>watch(expenseListControllerProvider)</code> อยู่ · <code>invalidate</code> สั่งให้ controller นั้น
+รัน <code>build()</code> ใหม่ = โหลด list ใหม่ผ่าน service · นี่คือพลังของ reactive state: เปลี่ยน "ต้นน้ำ" ที่เดียว
+ปลายน้ำอัปเดตเอง ไม่ต้องเดินสายส่งข้อมูลข้ามหน้าจอ</div>
+`;}
+
+function secState(){return `
+<p class="kicker">เข้าใจให้ลึก · เส้นแบ่งที่ junior พลาดบ่อยสุด</p>
+<h1>Entity vs Read model vs UI state</h1>
+<p class="lead">model มี <b>3 บทบาท</b> ที่หน้าตาคล้ายกันแต่อยู่คนละที่ ออกแบบผิดบทบาท = reuse ไม่ได้ หรือ state พังทั้งแอป
+แตะแท็บเพื่อเทียบ</p>
+
+<div class="tabs" id="state-tabs">
+  <button class="tab active" data-pane="p-ent">💎 Entity / Value object</button>
+  <button class="tab" data-pane="p-read">📄 Read model</button>
+  <button class="tab" data-pane="p-ui">🎚️ UI state</button>
+</div>
+
+<div class="tabpane show" id="p-ent">
+  <div class="card">
+    <h3 style="margin-top:0">ความจริงของ business ที่ไม่ขึ้นกับหน้าจอไหน</h3>
+    <p><b>อยู่ที่:</b> <span class="pill dom">domain/</span> · <b>ตัวอย่าง:</b> <code>Expense</code>, <code>Budget</code>, <code>Money</code>, <code>ExpenseCategory</code></p>
+    <table>
+      <tr><th>คุณสมบัติ</th><th>รายละเอียด</th></tr>
+      <tr><td>identity</td><td><b>มี</b> — entity ระบุด้วย id/key (<code>Expense.id</code>); value object ระบุด้วยค่า (<code>Money</code>)</td></tr>
+      <tr><td>ขึ้น wire / persist</td><td><b>ได้</b> — เป็นสิ่งที่ส่ง-เก็บจริง</td></tr>
+      <tr><td>อายุ</td><td>ยืน — มีตัวตนตลอด ไม่ผูกกับ query ไหน</td></tr>
+      <tr><td>behavior</td><td>ใส่ได้ถ้า derive จาก field ตัวเอง (<code>Money.+</code>)</td></tr>
+    </table>
+  </div>
+  ${codeCard('domain/money.dart','s-money',[0,1,2])}
+</div>
+
+<div class="tabpane" id="p-read">
+  <div class="card">
+    <h3 style="margin-top:0">"คำตอบของ 1 คำถาม" ที่ Service ประกอบขึ้น</h3>
+    <p><b>อยู่ที่:</b> <span class="pill dom">domain/</span> (โฟลเดอร์เดียวกับ entity!) · <b>suffix:</b>
+      <code>*Overview</code> / <code>*Summary</code> / <code>*Status</code> · <b>ตัวอย่าง:</b>
+      <code>ExpenseOverview</code>, <code>ExpenseSummary</code>, <code>CategoryBudgetStatus</code></p>
+    <table>
+      <tr><th>คุณสมบัติ</th><th>รายละเอียด</th></tr>
+      <tr><td>identity</td><td><b>ไม่มี</b> — เป็นแค่ผลลัพธ์ มัด field มารวมกัน</td></tr>
+      <tr><td>ขึ้น wire / persist</td><td><b>ไม่เคย</b> — ไม่มี response/table ไหนหน้าตาเหมือนมัน</td></tr>
+      <tr><td>อายุ</td><td>สั้น — เกิดเพื่อตอบ query เดียวแล้วทิ้ง</td></tr>
+      <tr><td>ใครสร้าง</td><td><b>Service</b> เท่านั้น (fold, join, summarize)</td></tr>
+    </table>
+  </div>
+  ${codeCard('domain/expense_overview.dart','s-overview',[3,4,5,6,7,8,9])}
+  <div class="why warn"><div class="h">⚠️ กับดักใหญ่: อย่าสร้าง read model ให้ "เหมือน response"</div>
+  ถ้า backend ส่ง <code>{ month, items:[...] }</code> อย่ารีบสร้าง domain <code>Budgets {month, items}</code> ที่ mirror wire —
+  นั่นคือ "response ที่เปลี่ยนชื่อ" ไม่ใช่ domain · ออกแบบรูปร่างตาม <b>use case</b> (เช่น <code>BudgetOverview</code>
+  ที่ flatten month ลงแต่ละ node แล้ว join กับ expense) ให้หน้าจอ render ง่ายที่สุด</div>
+</div>
+
+<div class="tabpane" id="p-ui">
+  <div class="card">
+    <h3 style="margin-top:0">สถานะของหน้าจอล้วน ๆ — ไม่ใช่ domain</h3>
+    <p><b>อยู่ที่:</b> <span class="pill pres">presentation/ (controller)</span> หรือ local widget state ·
+      <b>ตัวอย่าง:</b> filter chip ที่เลือก, ค่าในฟอร์ม, tab index, scroll position</p>
+    <table>
+      <tr><th>คุณสมบัติ</th><th>รายละเอียด</th></tr>
+      <tr><td>เป็น business ไหม</td><td><b>ไม่</b> — ปิดแอปแล้วหายได้ ไม่มีความหมายนอกหน้าจอนี้</td></tr>
+      <tr><td>อยู่ที่</td><td>sync controller (<code>expenseFilterControllerProvider</code>) ถ้าหลาย widget ใช้ร่วม;
+        <code>State</code> ของ <code>ConsumerStatefulWidget</code> ถ้า local กับฟอร์ม (text controller)</td></tr>
+      <tr><td>ห้าม</td><td>อยู่ใน <code>domain/</code> เด็ดขาด — domain ไม่รู้จัก "การถูกเลือก" หรือ "ช่องกรอก"</td></tr>
+    </table>
+  </div>
+  <div class="why"><div class="h">เส้นแบ่ง server state vs UI state ใน <code>CreateExpenseScreen</code></div>
+  ฟอร์มใช้ <code>ConsumerStatefulWidget</code> ได้ — เพราะ State ถือแค่ <b>local input</b> (text controller, category ที่เลือก)
+  ซึ่งเป็น UI state · แต่ผลการ submit (server round-trip) <b>ห้าม</b>อยู่ใน StatefulWidget มันเป็นงานของ
+  <code>CreateExpenseController</code> + <code>AsyncValue</code> · <b>กฎ:</b> server state ไม่เคยอยู่ใน StatefulWidget</div>
+</div>
+
+<hr class="soft">
+<h2>สรุปด้วยตารางเดียว</h2>
+<table>
+  <tr><th></th><th>💎 Entity / VO</th><th>📄 Read model</th><th>🎚️ UI state</th></tr>
+  <tr><td>โฟลเดอร์</td><td><code>domain/</code></td><td><code>domain/</code></td><td><code>presentation/</code></td></tr>
+  <tr><td>identity</td><td>มี</td><td>ไม่มี</td><td>ไม่มี</td></tr>
+  <tr><td>ขึ้น wire</td><td>ได้</td><td>ไม่เคย</td><td>ไม่เคย</td></tr>
+  <tr><td>ใครสร้าง</td><td>DTO mapper</td><td>Service</td><td>Controller / widget</td></tr>
+  <tr><td>ชื่อ</td><td>คำนามล้วน</td><td>suffix Overview/Summary/Status</td><td>—</td></tr>
+</table>
+`;}
+
+function secNaming(){return `
+<p class="kicker">เข้าใจให้ลึก</p>
+<h1>Naming conventions — suffix บอกชั้น</h1>
+<p class="lead">ในมาตรฐานนี้ <b>นามสกุลไฟล์/suffix ของ class = พิกัดของมันในสถาปัตยกรรม</b>
+เห็นชื่อแล้วรู้ทันทีว่าอยู่ชั้นไหน ทำหน้าที่อะไร · ลองกด suffix ดู</p>
+
+<div id="suffix-chips"></div>
+<div class="card" id="suffix-out"><span class="muted">— กด suffix ด้านบนเพื่อดูว่ามันอยู่ชั้นไหน —</span></div>
+
+<h2>กฎการตั้งชื่อที่พลาดบ่อย</h2>
+<div class="grid cols-2">
+  <div class="why"><div class="h">domain = คำนาม ห้ามขึ้นต้นด้วยกริยา</div>
+  <b>ผิด:</b> <code>GetExpense</code>, <code>FetchBudget</code> · <b>ถูก:</b> <code>Expense</code>, <code>Budget</code><br>
+  ชื่อ operation เป็นของ <i>repository method</i> และ <i>DTO</i> ไม่ใช่ของ model · model คือ "สิ่งของ" ไม่ใช่ "การกระทำ"</div>
+  <div class="why"><div class="h">read model = มี suffix บอกบทบาท</div>
+  <code>*Overview</code> (ภาพรวมหน้าหนึ่ง), <code>*Summary</code> (ผลรวม/aggregate), <code>*Status</code> (สถานะเทียบ) ·
+  พอเห็น suffix รู้เลยว่า "นี่คือคำตอบของ query ที่ Service ประกอบ" ไม่ใช่ entity</div>
+  <div class="why warn"><div class="h">คำว่า <code>Module</code> สงวนไว้เฉพาะ module machinery</div>
+  <code>Module</code> ในชื่อ class = เครื่องจักรคุม launchable module เท่านั้น (<code>*ModuleLauncher</code>,
+  <code>*ModuleController</code>, <code>*ModuleService</code>) · feature ธรรมดาอย่าง expense <b>ห้าม</b>มีคำนี้ในชื่อ</div>
+  <div class="why ok"><div class="h">ห้ามแก้ <code>*.g.dart</code> ด้วยมือ</div>
+  ไฟล์ <code>.g.dart</code> มาจาก codegen (riverpod_annotation, json_serializable) · แก้ annotation แล้วรัน
+  <code>rps gen build</code> ใหม่เสมอ ไม่แตะไฟล์ generated ตรง ๆ</div>
+</div>
+
+<h2>ตารางอ้างอิงเต็ม</h2>
+<table>
+  <tr><th>suffix / pattern</th><th>ชั้น</th><th>ตัวอย่าง</th></tr>
+  <tr><td><code>*_screen.dart</code></td><td><span class="pill pres">presentation</span></td><td>expense_list_screen.dart</td></tr>
+  <tr><td><code>*_controller.dart</code></td><td><span class="pill pres">presentation</span></td><td>create_expense_controller.dart</td></tr>
+  <tr><td><code>*_service.dart</code></td><td><span class="pill app">application</span></td><td>budget_service.dart</td></tr>
+  <tr><td><code>*_repository.dart</code></td><td><span class="pill data">data</span></td><td>expense_repository.dart</td></tr>
+  <tr><td><code>dto/{request,response}/</code></td><td><span class="pill data">data</span></td><td>get_expenses_response.dart</td></tr>
+  <tr><td><code>fake_*.dart</code></td><td><span class="pill data">data/fake</span></td><td>fake_expense_repository.dart</td></tr>
+  <tr><td>คำนามล้วน</td><td><span class="pill dom">domain</span> (entity/VO)</td><td>expense.dart, money.dart</td></tr>
+  <tr><td><code>*Overview/Summary/Status</code></td><td><span class="pill dom">domain</span> (read model)</td><td>expense_overview.dart</td></tr>
+  <tr><td><code>*_router.dart</code></td><td><span class="pill" style="color:var(--brand)">router</span></td><td>expense_router.dart</td></tr>
+</table>
+`;}
+
+function secTest(){return `
+<p class="kicker">เข้าใจให้ลึก</p>
+<h1>Testing — Robot & Fake</h1>
+<p class="lead">2 เสาหลัก: widget test เป็น <b>Robot-only</b> · ฉีดของปลอมผ่าน <b>provider override</b> ไม่ mock provider ตรง</p>
+
+<h2>Fake repository: <code>implements</code> ไม่ใช่ <code>extends</code></h2>
+${codeCard('data/fake/fake_expense_repository.dart','s-fake',[0,1,2,3,4,5,6])}
+<div class="why"><div class="h">ทำไม <code>implements</code> ไม่ใช่ <code>extends</code>?</div>
+<code>implements</code> บังคับให้ fake มี public surface เหมือนของจริงเป๊ะ แต่ไม่ลากเอา in-memory store / network
+จำลองของจริงติดมา · fake คุมข้อมูลเองทั้งหมด (canned) · มี <code>createdRequests</code> ไว้ spy ว่า service ส่งอะไรลงมา
+และ <code>errorToThrow</code> ไว้ test error state · นี่คือเหตุผลที่ repository <b>ไม่ต้อง</b>มี abstract interface —
+provider override + implements ก็พอ</div>
+
+<h2>Widget test: Robot-only + override</h2>
+${codeCard('test/.../expense_list_robot_test.dart','s-test',[7,8,9,10,11,12,13,14,15,16,17])}
+<div class="why"><div class="h">🔑 ทำไม test body ห้ามเรียก <code>tester.*</code> / <code>find.*</code> ตรง ๆ?</div>
+ทุก interaction/assertion ต้องผ่าน <code>Robot</code> (หรือ feature robot) · helper ขาด = ไป <b>เพิ่มที่ Robot</b>
+ไม่ใช่เรียก <code>tester</code> ใน test · ประโยชน์: พอ UI เปลี่ยน (เปลี่ยน key, เปลี่ยน widget tree) แก้ที่ Robot ที่เดียว
+test ทั้งหมดไม่พัง · test body อ่านเป็นภาษา business ("tap filter, expect total") ไม่ใช่ภาษา widget</div>
+<div class="why"><div class="h">ทำไมฉีด fake ผ่าน <code>overrideWith</code> ไม่ mock provider?</div>
+provider override คือ seam ที่ออกแบบมาให้สลับ implementation — mock provider ตรง ๆ จะ bypass lifecycle/dependency
+ของ Riverpod และเปราะ · <code>overrideRepos: [xRepositoryProvider.overrideWith((ref) =&gt; Fake())]</code>
+สลับเฉพาะชั้น data ส่วน service/controller จริงทำงานตามปกติ = test integration ของ logic จริง</div>
+
+<div class="why ok"><div class="h">ระดับ test กับเครื่องมือ</div>
+• <b>domain test</b> = <code>test()</code> ธรรมดา ไม่ต้องมี Robot/Riverpod (เช่น <code>Money.+</code>) ·
+• <b>service/controller test</b> = <code>ProviderContainer</code> + <code>addTearDown(container.dispose)</code> + override fake ·
+• <b>widget test</b> = Robot-only + <code>overrideRepos</code></div>
+`;}
+
+function secCheat(){return `
+<p class="kicker">สรุป</p>
+<h1>Checklist & กฎทอง</h1>
+<p class="lead">ก่อน open PR ไล่เช็คตามนี้ ผ่านครบ = feature อยู่ใน "ท่า" ที่ถูกต้อง</p>
+
+<h2>✅ ลำดับการสร้าง feature ใหม่</h2>
+<ul class="checklist">
+  <li><b>domain/</b> ก่อน — entity/VO (คำนาม, const, non-nullable+default) แล้วค่อย read model (suffix Overview/Summary/Status)</li>
+  <li><b>data/</b> — DTO (nullable ทุก field, <code>to&lt;Domain&gt;</code> getter) + repository (I/O only, <code>@Riverpod(keepAlive:true)</code>)</li>
+  <li>🛑 repository ใหม่ → <b>ถาม user</b> ว่าใช้ Dio client ตัวไหน (crypto contract)</li>
+  <li><b>application/</b> — service (business logic ทั้งหมด, <code>@riverpod</code> auto-dispose, ไม่มี Flutter import)</li>
+  <li><b>presentation/</b> — controller (เรียก service เท่านั้น) + screen (sub-widget เป็น class)</li>
+  <li><b>router/</b> — enum <code>with TndsRouter</code> + spread เข้า app router</li>
+  <li><b>test/</b> — fake (<code>implements</code>) + Robot-only widget test + domain/service test</li>
+  <li>รัน <code>rps gen build</code> หลังแก้ annotation · <code>rps analyze</code> · <code>rps test</code></li>
+</ul>
+
+<h2>🚫 กฎห้าม (red flags ที่ reviewer จะตีกลับ)</h2>
+<div class="grid cols-2">
+  <div class="why warn"><div class="h">presentation แตะ data/</div>
+  controller/screen import <code>data/</code> หรืออ่าน <code>*RepositoryProvider</code> = ผิด ต้องผ่าน service</div>
+  <div class="why warn"><div class="h">function provider เรียก repository</div>
+  <code>@riverpod Future&lt;T&gt; getX(Ref ref) =&gt; ref.read(repo)...</code> = ต้องห้าม ย้ายเป็น method ใน service</div>
+  <div class="why warn"><div class="h">business logic ในหน้าจอ/repository</div>
+  fold/join/summarize ต้องอยู่ใน service เท่านั้น</div>
+  <div class="why warn"><div class="h">domain import flutter/riverpod/dio</div>
+  domain ต้อง pure Dart · Flutter type (IconData, NumberFormat) → extension ฝั่ง presentation</div>
+  <div class="why warn"><div class="h">try/catch กลืน error</div>
+  controller ต้องใช้ <code>AsyncValue.guard</code> · ห้าม print ใน <code>lib/src/</code></div>
+  <div class="why warn"><div class="h">path string ดิบ / mock provider ตรง</div>
+  navigate ด้วย enum.name · ฉีด fake ด้วย overrideWith</div>
+</div>
+
+<h2>🏅 กฎทอง 1 บรรทัด</h2>
+<div class="card" style="font-size:15px">
+  <p style="margin:6px 0">🧭 <b>Controller → Service → Repository</b> เสมอ ไม่มีลัด</p>
+  <p style="margin:6px 0">💎 <b>domain = คำนาม pure Dart</b> · ออกแบบตาม use case ไม่ใช่เงาของ response</p>
+  <p style="margin:6px 0">⚙️ <b>business logic อยู่ที่ Service ที่เดียว</b> · fold collection = service, derive จาก field ตัวเอง = domain getter</p>
+  <p style="margin:6px 0">🔌 <b>provider ประกาศคู่กับ repository</b> · keepAlive = infrastructure, auto-dispose = service/controller</p>
+  <p style="margin:6px 0">🎚️ <b>3 บทบาทของ model:</b> Entity (มี id, ขึ้น wire) · Read model (Service ประกอบ, ไม่ขึ้น wire) · UI state (controller)</p>
+  <p style="margin:6px 0">🧪 <b>watch ใน build · read ใน callback · listen สำหรับ side effect · invalidate หลัง mutation</b></p>
+</div>
+
+<div class="why ok" style="margin-top:24px"><div class="h">อ่านต่อในเรพจริง</div>
+กฎฉบับเต็มอยู่ที่ <code>.claude/skills/tnds-flutter-app/references/</code> (architecture-layers, service-layer,
+data-layer, riverpod-state, navigation, widgets-theming, testing) · และฟีเจอร์ตัวอย่างเต็ม ๆ ที่
+<code>lib/src/features/expense/</code> พร้อม <code>README.md</code> ที่อธิบายแต่ละไฟล์</div>
+`;}
+
+/* suffix decoder data */
+const SUFFIXES=[
+  ['*_screen.dart','pres','presentation/','หน้าจอ — ConsumerWidget, render AsyncValue, sub-widget เป็น class'],
+  ['*_controller.dart','pres','presentation/','จัดการ async/UI state, เรียก service เท่านั้น (read/submit/sync/derived)'],
+  ['*_service.dart','app','application/','business / use-case logic ทั้งหมด · plain class + Ref · 1 @riverpod'],
+  ['*_repository.dart','data','data/','I/O mapping เท่านั้น · @Riverpod(keepAlive:true) + ประกาศ provider ในไฟล์'],
+  ['*_request/_response','data','data/dto/','DTO · nullable ทุก field · fromJson/toJson · to<Domain> getter'],
+  ['fake_*.dart','data','data/fake/','ของปลอมสำหรับ test · implements repository · ฉีดผ่าน overrideWith'],
+  ['Money / Expense','dom','domain/','entity/value object — คำนามล้วน, const, pure Dart'],
+  ['*Overview/Summary/Status','dom','domain/','read model — "คำตอบ 1 query" ที่ Service ประกอบ, ไม่ขึ้น wire'],
+  ['*_router.dart','brand','router/','enum with TndsRouter · navigate ด้วย .name'],
+  ['*.g.dart','data','generated','codegen — ห้ามแก้มือ · รัน rps gen build'],
+];
+
+/* ================= APP BOOT ================= */
+const content=document.getElementById('content');
+const nav=document.getElementById('nav');
+const msel=document.getElementById('msel');
+const visited=new Set();
+let cur=0;
+
+function buildNav(){
+  let html='',lastGroup='';
+  SECTIONS.forEach((s,i)=>{
+    if(s.group!==lastGroup){html+=`<div class="sec-label">${s.group}</div>`;lastGroup=s.group;}
+    html+=`<li><button data-i="${i}"><span class="n-num">${s.n}</span><span>${s.title}</span></button></li>`;
+  });
+  nav.innerHTML=html;
+  msel.innerHTML=SECTIONS.map((s,i)=>`<option value="${i}">${s.n==='✓'?'✓':s.n+'.'} ${s.title}</option>`).join('');
+}
+function renderAll(){
+  content.innerHTML=SECTIONS.map((s,i)=>`<section class="section" id="sec-${i}">${s.body()}</section>`).join('')+footHtml();
+  // attach copy buttons
+  content.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',()=>{
+    const raw=snippet(b.dataset.snip);
+    navigator.clipboard.writeText(raw).then(()=>{b.textContent='คัดลอกแล้ว ✓';setTimeout(()=>b.textContent='คัดลอก',1400);});
+  }));
+  // goto links inside content
+  content.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click',e=>{
+    const id=el.dataset.goto;const i=SECTIONS.findIndex(s=>s.id===id);if(i>=0){go(i);}
+  }));
+  initSuffix(); initTabs(); initTrace(); initStateTabs();
+}
+function footHtml(){return '';}
+function go(i){
+  cur=i;visited.add(i);
+  content.querySelectorAll('.section').forEach((s,idx)=>s.classList.toggle('show',idx===i));
+  nav.querySelectorAll('button').forEach((b,idx)=>{
+    b.classList.toggle('active',idx===i);
+    b.classList.toggle('done',visited.has(idx)&&idx!==i);
+  });
+  msel.value=i;
+  // foot nav
+  injectFoot(i);
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function injectFoot(i){
+  const sec=document.getElementById('sec-'+i);
+  let f=sec.querySelector('.footnav');if(f)f.remove();
+  const prev=SECTIONS[i-1],next=SECTIONS[i+1];
+  const el=document.createElement('div');el.className='footnav';
+  el.innerHTML=`
+    <button ${i===0?'disabled':''} data-i="${i-1}"><small>← ก่อนหน้า</small>${prev?prev.title:''}</button>
+    <button class="next" ${i===SECTIONS.length-1?'disabled':''} data-i="${i+1}"><small>ถัดไป →</small>${next?next.title:''}</button>`;
+  el.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{if(!b.disabled)go(+b.dataset.i);}));
+  sec.appendChild(el);
+}
+function updateProgress(){
+  const pct=Math.round((visited.size/SECTIONS.length)*100);
+  document.getElementById('pbar').style.width=pct+'%';
+  document.getElementById('ptext').textContent=pct+'% · อ่านแล้ว '+visited.size+'/'+SECTIONS.length+' บท';
+}
+
+/* suffix decoder */
+function initSuffix(){
+  const wrap=document.getElementById('suffix-chips');if(!wrap)return;
+  wrap.innerHTML=SUFFIXES.map((s,i)=>`<span class="suffix-chip" data-i="${i}">${s[0]}</span>`).join('');
+  const out=document.getElementById('suffix-out');
+  wrap.querySelectorAll('.suffix-chip').forEach(c=>c.addEventListener('click',()=>{
+    wrap.querySelectorAll('.suffix-chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    const s=SUFFIXES[c.dataset.i];const colors={pres:'pres',app:'app',dom:'dom',data:'data',brand:''};
+    out.innerHTML=`<div style="display:flex;gap:14px;align-items:flex-start">
+      <span class="pill ${colors[s[1]]||''}" style="margin-top:2px">${s[2]}</span>
+      <div><b style="font-family:var(--mono);font-size:13px">${s[0]}</b><p class="muted" style="margin:4px 0 0">${s[3]}</p></div></div>`;
+  }));
+}
+/* generic tabs (state section) */
+function initTabs(){}
+function initStateTabs(){
+  const t=document.getElementById('state-tabs');if(!t)return;
+  t.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
+    t.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('#p-ent,#p-read,#p-ui').forEach(p=>p.classList.remove('show'));
+    document.getElementById(tab.dataset.pane).classList.add('show');
+  }));
+}
+/* flow trace */
+let traceTimer=null;
+function initTrace(){
+  const play=document.getElementById('tplay'),reset=document.getElementById('treset');
+  if(!play)return;
+  const steps=[...document.querySelectorAll('#trace .step')];
+  function clear(){steps.forEach(s=>s.classList.remove('on'));}
+  play.addEventListener('click',()=>{
+    clearInterval(traceTimer);clear();let k=0;
+    play.textContent='▶ กำลังเล่น...';
+    traceTimer=setInterval(()=>{
+      if(k>0)steps[k-1].classList.remove('on');
+      if(k>=steps.length){clearInterval(traceTimer);play.textContent='▶ เล่นอีกครั้ง';return;}
+      steps[k].classList.add('on');steps[k].scrollIntoView({block:'center',behavior:'smooth'});k++;
+    },1100);
+  });
+  reset.addEventListener('click',()=>{clearInterval(traceTimer);clear();play.textContent='▶ เล่น';});
+}
+
+/* nav + keyboard */
+buildNav();renderAll();
+nav.addEventListener('click',e=>{const b=e.target.closest('button[data-i]');if(b)go(+b.dataset.i);});
+msel.addEventListener('change',()=>go(+msel.value));
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='SELECT'||e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight'&&cur<SECTIONS.length-1)go(cur+1);
+  if(e.key==='ArrowLeft'&&cur>0)go(cur-1);
+});
+go(0);
+</script>
+</body>
+</html>

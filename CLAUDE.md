@@ -35,7 +35,7 @@ Each feature under `lib/src/features/<name>/`:
 <feature>/
 ├── application/      # Services (*_service.dart), module launchers & module services
 ├── data/             # Repositories, dto/{request,response}/, fake/
-├── domain/           # Pure Dart models (nouns)
+├── domain/           # Pure Dart nouns: entities/value objects + service-built read models (*Overview/*Summary/*Status)
 ├── presentation/     # Screens, widgets, controllers (*_controller.dart incl. *_module_controller.dart)
 └── router/           # GoRoute definitions for this feature
 ```

@@ -1,4 +1,12 @@
 {
+  "budget": {
+    "empty": "เดือนนี้ยังไม่มีงบหรือรายจ่าย",
+    "limit": "งบ {}",
+    "no_budget": "ยังไม่ตั้งงบ",
+    "over_by": "เกินงบ {}",
+    "remaining": "เหลือ {}",
+    "title": "งบรายจ่าย"
+  },
   "category": {
     "entertainment": "บันเทิง",
     "food": "อาหาร",
@@ -19,7 +27,14 @@
     "amount": "จำนวนเงิน",
     "category": "หมวดหมู่",
     "date": "วันที่",
+    "delete_button": "ลบรายจ่าย",
+    "delete_confirm_message": "รายการนี้จะถูกลบอย่างถาวร",
+    "delete_confirm_title": "ลบรายการนี้?",
     "title": "รายละเอียดรายจ่าย"
+  },
+  "edit": {
+    "save_button": "บันทึกการแก้ไข",
+    "title": "แก้ไขรายจ่าย"
   },
   "error": {
     "not_found_description": "รายการนี้อาจถูกลบไปแล้ว กรุณารีเฟรชแล้วลองใหม่อีกครั้ง",

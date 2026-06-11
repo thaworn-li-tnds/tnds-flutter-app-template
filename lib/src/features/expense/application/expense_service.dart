@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:tnds_flutter_app/src/features/expense/data/dto/request/create_expense_request.dart';
+import 'package:tnds_flutter_app/src/features/expense/data/dto/request/update_expense_request.dart';
 import 'package:tnds_flutter_app/src/features/expense/data/expense_repository.dart';
 import 'package:tnds_flutter_app/src/features/expense/domain/expense.dart';
 import 'package:tnds_flutter_app/src/features/expense/domain/expense_category.dart';
@@ -61,6 +62,31 @@ class ExpenseService {
     );
     return _repo.createExpense(request);
   }
+
+  /// Edit an existing expense. Like [createExpense] it builds the request DTO
+  /// from domain-typed params here, so presentation never sees DTO shapes; the
+  /// [id] addresses the resource and stays out of the request body.
+  Future<Expense> updateExpense({
+    required String id,
+    required String title,
+    required ExpenseCategory category,
+    required String amount,
+    String? date,
+  }) {
+    final request = UpdateExpenseRequest(
+      title: title,
+      category: category.wireValue,
+      amount: amount,
+      currency: Money.defaultCurrency,
+      date: date ?? _today,
+    );
+    return _repo.updateExpense(id, request);
+  }
+
+  /// Delete by id. A thin pass-through today, but it still goes through the
+  /// service so presentation never touches the repository — and any future
+  /// rule (audit log, optimistic cache eviction) has one place to live.
+  Future<void> deleteExpense(String id) => _repo.deleteExpense(id);
 
   /// `yyyy-MM-dd` of "today" from the injected [Clock] — never
   /// `DateTime.now()` directly, so the defaulting rule is testable with a

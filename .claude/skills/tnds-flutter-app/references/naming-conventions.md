@@ -9,6 +9,10 @@ Before generating code in this area, output verbatim: `Reading: naming-conventio
 
 1. **File suffix encodes the layer** — see the table; a suffix in the wrong folder is a violation.
 2. **Domain models are nouns.** A domain class name starting with a verb (`Get`, `Fetch`, `Load`, `Create`, `Update`, `Delete`) is a violation.
+   Domain nouns come in two roles — both live flat in `domain/`, the NAME and doc comment carry the distinction:
+   - **Entity / value object** (the business model): has its own identity or value semantics, independent of any screen — `Expense`, `Budget`, `Money`, `ExpenseCategory`. Doc comment starts with `Entity —` / `Value object —`.
+   - **Read model** (a projection): composed by a Service to answer ONE query; no identity, never persisted or sent to the wire. Suffix signals it: `*Overview`, `*Summary`, `*Status` — `ExpenseOverview`, `CategoryBudgetStatus`. Doc comment starts with `Read model —`.
+   True UI state (selected filter, form input) is NEITHER — it lives in a controller, not in `domain/`.
 3. **`Module` in a class name = module-control machinery only** (launcher / session controller / lifecycle service). Feature work stays plain. `Module` is a naming signal, **not** a folder rule: a `*_module_controller.dart` still lives in `presentation/` (it is a controller); only the launcher and module service sit in `application/`. See [module-launcher.md](module-launcher.md).
 4. Route paths kebab-case; enum values camelCase; providers follow the class name (`sampleScreenServiceProvider`).
 

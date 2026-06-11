@@ -2,9 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:tnds_flutter_app/src/exceptions/app_exception.dart';
 import 'package:tnds_flutter_app/src/features/expense/data/dto/request/create_expense_request.dart';
+import 'package:tnds_flutter_app/src/features/expense/data/dto/request/update_expense_request.dart';
 import 'package:tnds_flutter_app/src/features/expense/data/dto/response/create_expense_response.dart';
 import 'package:tnds_flutter_app/src/features/expense/data/dto/response/get_expense_response.dart';
 import 'package:tnds_flutter_app/src/features/expense/data/dto/response/get_expenses_response.dart';
+import 'package:tnds_flutter_app/src/features/expense/data/dto/response/update_expense_response.dart';
 import 'package:tnds_flutter_app/src/features/expense/domain/expense.dart';
 
 part 'expense_repository.g.dart';
@@ -53,6 +55,24 @@ class ExpenseRepository {
     _records.add(record);
     return CreateExpenseResponse.fromJson({'item': record}).toExpense;
   }
+
+  Future<Expense> updateExpense(String id, UpdateExpenseRequest request) async {
+    await _simulateNetwork();
+    final index = _records.indexWhere((r) => r['id'] == id);
+    // Same not-found contract as [getExpense]: editing a vanished record is a
+    // typed failure, never a silent no-op.
+    if (index == -1) throw ExpenseNotFoundException();
+    final record = <String, dynamic>{...request.toJson(), 'id': id};
+    _records[index] = record;
+    return UpdateExpenseResponse.fromJson({'item': record}).toExpense;
+  }
+
+  Future<void> deleteExpense(String id) async {
+    await _simulateNetwork();
+    final index = _records.indexWhere((r) => r['id'] == id);
+    if (index == -1) throw ExpenseNotFoundException();
+    _records.removeAt(index);
+  }
 }
 
 @Riverpod(keepAlive: true)
@@ -90,5 +110,15 @@ const _seedExpenseRecords = <Map<String, dynamic>>[
     'amount': '1250.75',
     'currency': 'THB',
     'date': '2026-06-10',
+  },
+  // Previous month on purpose — the budget overview's month filter must
+  // visibly exclude it.
+  {
+    'id': 'exp-5',
+    'title': 'Last month dinner',
+    'category': 'FOOD',
+    'amount': '999.00',
+    'currency': 'THB',
+    'date': '2026-05-28',
   },
 ];
