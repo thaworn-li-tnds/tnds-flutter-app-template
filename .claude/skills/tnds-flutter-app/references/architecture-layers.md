@@ -8,7 +8,7 @@ Before generating code in this area, output verbatim: `Reading: architecture-lay
 ## Rules — NEVER Violate
 
 1. **Dependency direction**: `Presentation → Application → Domain ← Data`. Unidirectional, no reverse imports.
-2. **Domain is pure Dart** — zero imports of `flutter`, `riverpod`, `dio`, or any platform package. Models, value objects, enums only.
+2. **Domain is pure Dart** — zero imports of `flutter`, `riverpod`, `dio`, or any platform package. Entities, value objects, enums, and service-built read models (`*Overview`/`*Summary`/`*Status` — see [naming-conventions.md](naming-conventions.md)) only. UI state stays in controllers.
 3. **Data does I/O mapping only** — no business logic. DTO ↔ domain via `json_serializable`. Uses the shared Dio clients only.
 4. **Application must not import Flutter widgets.** Services and notifiers orchestrate use-cases and transform domain → state.
 5. **Presentation never calls Dio or a repository.** `ConsumerWidget`/`ConsumerStatefulWidget` + controllers only.

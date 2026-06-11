@@ -5,6 +5,12 @@ abstract class LocaleKeys {
   static const common_close = 'common.close';
   static const common_error_description = 'common.error.description';
   static const common_error_title = 'common.error.title';
+  static const expense_budget_empty = 'expense.budget.empty';
+  static const expense_budget_limit = 'expense.budget.limit';
+  static const expense_budget_no_budget = 'expense.budget.no_budget';
+  static const expense_budget_over_by = 'expense.budget.over_by';
+  static const expense_budget_remaining = 'expense.budget.remaining';
+  static const expense_budget_title = 'expense.budget.title';
   static const expense_category_entertainment = 'expense.category.entertainment';
   static const expense_category_food = 'expense.category.food';
   static const expense_category_other = 'expense.category.other';

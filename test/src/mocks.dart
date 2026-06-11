@@ -26,6 +26,14 @@ class TestAssetLoader extends AssetLoader {
       },
       'home': {'title': 'TNDS Flutter App'},
       'expense': {
+        'budget': {
+          'empty': 'No budgets or spending this month',
+          'limit': 'Limit {}',
+          'no_budget': 'No budget set',
+          'over_by': 'Over by {}',
+          'remaining': '{} left',
+          'title': 'Budget',
+        },
         'category': {
           'entertainment': 'Entertainment',
           'food': 'Food',

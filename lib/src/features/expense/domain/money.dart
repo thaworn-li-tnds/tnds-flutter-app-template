@@ -19,6 +19,16 @@ class Money {
     return Money(amount: amount + other.amount, currency: currency);
   }
 
+  /// Same-currency subtraction. The result MAY be negative — a negative
+  /// remaining budget is the over-budget signal; clamping for display is a
+  /// presentation concern.
+  Money operator -(Money other) {
+    if (currency != other.currency) {
+      throw ArgumentError('Cannot subtract ${other.currency} from $currency');
+    }
+    return Money(amount: amount - other.amount, currency: currency);
+  }
+
   @override
   bool operator ==(Object other) =>
       other is Money && other.amount == amount && other.currency == currency;

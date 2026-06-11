@@ -24,17 +24,55 @@ domain/expense.dart                         Expense (pure Dart noun)
 
 ## Domain: ออกแบบ data model แบบ OOP
 
-| ไฟล์ | สอนเรื่อง |
-|---|---|
-| [domain/money.dart](domain/money.dart) | **Value object** — เท่ากันด้วยค่า (`==`/`hashCode`), พก behavior ของตัวเอง (`operator +`, `defaultCurrency`) แทนการส่ง `double` ดิบไปทั่วแอป; การ format แสดงผล (ใช้ `NumberFormat` จาก intl) ไม่อยู่ใน domain |
-| [domain/expense_category.dart](domain/expense_category.dart) | **Enum with behavior** — `wireValue`/`labelKey` อยู่บน enum, parse แบบ tolerant (`from()` ไม่รู้จัก → `other`); **ไม่มี IconData** เพราะ Flutter type ห้ามเข้า domain |
-| [domain/expense.dart](domain/expense.dart) | **Entity + composition** — มีตัวตนด้วย `id`, ประกอบจาก `Money` + `ExpenseCategory` |
-| [domain/expense_summary.dart](domain/expense_summary.dart) | **Aggregate** — เก็บผลลัพธ์อย่างเดียว การคำนวณอยู่ที่ `ExpenseService.summarize` |
-| [presentation/widgets/expense_category_icon.dart](presentation/widgets/expense_category_icon.dart) | คู่ตรงข้ามของ enum: behavior ที่เป็น Flutter type (`IconData`) อยู่ฝั่ง presentation |
-| [presentation/widgets/money_format.dart](presentation/widgets/money_format.dart) | คู่ตรงข้ามของ `Money`: `formatted` ใช้ `NumberFormat` (intl) ซึ่งเป็น dependency ฝั่งแสดงผล จึงเป็น extension ใน presentation |
+โมเดลใน `domain/` มี **2 บทบาท** — อยู่โฟลเดอร์เดียวกัน แต่ชื่อ + doc comment บอกบทบาทเสมอ:
+
+- **Entity / Value object** = ความจริงของ business มีตัวตน/ค่าของตัวเอง ไม่ขึ้นกับหน้าจอไหน
+- **Read model** (suffix `*Overview` / `*Summary` / `*Status`) = "คำตอบของ 1 คำถาม" ที่ Service
+  ประกอบขึ้น — ไม่มี identity, ไม่ถูก persist, ไม่ขึ้น wire
+- ส่วน **UI state จริง ๆ** (filter ที่เลือก, ค่าในฟอร์ม) ไม่ใช่ทั้งสองอย่าง — อยู่ใน controller เท่านั้น
+
+| ไฟล์ | บทบาท | สอนเรื่อง |
+|---|---|---|
+| [domain/money.dart](domain/money.dart) | Value object | เท่ากันด้วยค่า (`==`/`hashCode`), พก behavior ของตัวเอง (`operator +`/`-`, `defaultCurrency`) แทนการส่ง `double` ดิบไปทั่วแอป; การ format แสดงผล (ใช้ `NumberFormat` จาก intl) ไม่อยู่ใน domain |
+| [domain/expense_category.dart](domain/expense_category.dart) | Value object | **Enum with behavior** — `wireValue`/`labelKey` อยู่บน enum, parse แบบ tolerant (`from()` ไม่รู้จัก → `other`); **ไม่มี IconData** เพราะ Flutter type ห้ามเข้า domain |
+| [domain/expense.dart](domain/expense.dart) | Entity | มีตัวตนด้วย `id`, ประกอบจาก `Money` + `ExpenseCategory` |
+| [domain/budget.dart](domain/budget.dart) | Entity | แผนงบ 1 หมวด/เดือน (identity = `category`+`month`) — สังเกตว่า `month` ถูก mapper flatten ลงมาจาก root ของ response (wire ไม่ได้หน้าตาแบบนี้) |
+| [domain/expense_summary.dart](domain/expense_summary.dart) | Read model | **Aggregate** — เก็บผลลัพธ์อย่างเดียว การคำนวณอยู่ที่ `ExpenseService.summarize` |
+| [domain/expense_overview.dart](domain/expense_overview.dart) | Read model | คำตอบของหน้า list — expenses + summary เป็น noun เดียวที่ controller expose |
+| [domain/category_budget_status.dart](domain/category_budget_status.dart) | Read model | **Node ใน object graph** — ถือ `Budget?` + `List<Expense>` ตัวจริง (ไม่ใช่ id/code); getter `remaining`/`utilization`/`isOverBudget` เป็น **derived** ไม่มีบน wire; `budget == null` คือ semantic null ("ใช้เงินโดยไม่มีแผน") |
+| [domain/budget_overview.dart](domain/budget_overview.dart) | Read model | ผลลัพธ์ของการ **join 2 endpoints** — ไม่มี response ตัวไหนหน้าตาเหมือน object นี้ |
+| [presentation/widgets/expense_category_icon.dart](presentation/widgets/expense_category_icon.dart) | — | คู่ตรงข้ามของ enum: behavior ที่เป็น Flutter type (`IconData`) อยู่ฝั่ง presentation |
+| [presentation/widgets/money_format.dart](presentation/widgets/money_format.dart) | — | คู่ตรงข้ามของ `Money`: `formatted` ใช้ `NumberFormat` (intl) ซึ่งเป็น dependency ฝั่งแสดงผล จึงเป็น extension ใน presentation |
 
 กติกา domain: ชื่อเป็น **คำนาม**, `const` constructor, field non-nullable มี default, ห้าม import
 flutter/riverpod/dio
+
+## Budget: domain คือ object graph ไม่ใช่เงาของ response
+
+Slice นี้มีไว้สอนว่า**ห้าม map response จาก datasource มาตรง ๆ** — ไล่อ่านตามนี้:
+
+1. **Wire เป็น normalized data** —
+   [get_budgets_response.dart](data/dto/response/get_budgets_response.dart): `month` อยู่ระดับ
+   root ของ response (ไม่อยู่ใน item) และแต่ละ item อ้างหมวดด้วย code string; mapper `toBudgets`
+   flatten month ลงทุก `Budget` + resolve code → enum **อย่าสร้าง domain `Budgets {month, items}`
+   ที่ mirror wire** — นั่นคือ response ที่เปลี่ยนชื่อเฉย ๆ
+2. **Join เกิดที่ Service** — [budget_service.dart](application/budget_service.dart):
+   `BudgetRepository` กับ `ExpenseRepository` ต่างคนต่างคืน list แบน ๆ; `BudgetService` คือคนเดียว
+   ที่รู้ความสัมพันธ์ — จับคู่ budget↔expenses ต่อหมวด, กรอง expense ตามเดือน (ISO-8601 prefix),
+   fold ยอด spent, แล้วสร้าง status จาก **union** ของสองฝั่ง (งบที่ไม่มีการใช้ และการใช้ที่ไม่มีงบ
+   ต้องโผล่ทั้งคู่ — inner join จะทำข้อมูลหายเงียบ ๆ)
+3. **ตัวเลขบนจอเป็น derived ทั้งหมด** — `spent`/`remaining`/`utilization`/`isOverBudget`
+   ไม่มีอยู่บน wire เลยสักตัว; เส้นแบ่งคือ "fold ข้าม collection = Service, derive จาก field
+   ตัวเอง = domain getter" (อ่าน doc ใน `category_budget_status.dart`)
+4. **Bonus 2 บทเรียนใน `_fetchBoth`** — ยิง 2 endpoints ขนานด้วย record `.wait` แล้วต้อง unwrap
+   `ParallelWaitError` ไม่งั้น typed `AppException` จะกลายเป็น `UnknownException` บนจอ; และ
+   `dart:async` ต้อง import แบบ prefix เพราะ `AsyncError` ของ Riverpod shadow ของ SDK —
+   catch clause ที่ไม่ prefix จะ match ผิด type แบบเงียบ ๆ
+
+ดู test ประกอบ: [budget_service_test.dart](../../../../test/src/features/expense/application/budget_service_test.dart)
+(union/month-filter/ordering/typed-error) และ
+[get_budgets_response_test.dart](../../../../test/src/features/expense/data/dto/response/get_budgets_response_test.dart)
+(การ flatten month)
 
 ## ไล่ 1 tap: กด Save ในหน้า Create
 

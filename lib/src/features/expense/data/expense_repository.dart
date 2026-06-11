@@ -91,4 +91,14 @@ const _seedExpenseRecords = <Map<String, dynamic>>[
     'currency': 'THB',
     'date': '2026-06-10',
   },
+  // Previous month on purpose — the budget overview's month filter must
+  // visibly exclude it.
+  {
+    'id': 'exp-5',
+    'title': 'Last month dinner',
+    'category': 'FOOD',
+    'amount': '999.00',
+    'currency': 'THB',
+    'date': '2026-05-28',
+  },
 ];

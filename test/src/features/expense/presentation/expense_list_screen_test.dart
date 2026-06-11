@@ -74,4 +74,15 @@ void main() {
 
     r.verifyPushedCreate();
   });
+
+  testWidgets('tapping the app-bar action pushes the budget overview', (
+    tester,
+  ) async {
+    final r = ExpenseRobot(Robot(tester));
+    await r.pumpExpenseListScreen();
+
+    await r.tapBudgetEntry();
+
+    r.verifyPushedBudgetOverview();
+  });
 }

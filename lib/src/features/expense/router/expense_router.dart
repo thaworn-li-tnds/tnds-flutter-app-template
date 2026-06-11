@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:tnds_flutter_app/src/features/expense/presentation/budget_overview_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/create_expense_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/expense_detail_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/expense_list_screen.dart';
@@ -9,7 +10,8 @@ import 'package:tnds_flutter_app/src/router/tnds_route.dart';
 enum ExpenseRouter with TndsRouter {
   expenseList,
   expenseDetail,
-  createExpense;
+  createExpense,
+  budgetOverview;
 
   @override
   String get routerName => 'expense_router';
@@ -23,6 +25,8 @@ enum ExpenseRouter with TndsRouter {
         return '/expense/detail';
       case ExpenseRouter.createExpense:
         return '/expense/create';
+      case ExpenseRouter.budgetOverview:
+        return '/expense/budget';
     }
   }
 }
@@ -47,5 +51,10 @@ final expenseRouter = <GoRoute>[
     path: ExpenseRouter.createExpense.path,
     name: ExpenseRouter.createExpense.name,
     builder: (context, state) => const CreateExpenseScreen(),
+  ),
+  GoRoute(
+    path: ExpenseRouter.budgetOverview.path,
+    name: ExpenseRouter.budgetOverview.name,
+    builder: (context, state) => const BudgetOverviewScreen(),
   ),
 ];
