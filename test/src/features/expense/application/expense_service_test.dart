@@ -125,4 +125,61 @@ void main() {
       expect(repository.createdRequests.single.date, '2026-06-15');
     },
   );
+
+  test('updateExpense builds the request DTO and addresses the id', () async {
+    final (:container, :repository) = makeContainer();
+    final service = container.read(expenseServiceProvider);
+
+    await service.updateExpense(
+      id: 'exp-1',
+      title: 'Brunch with the team',
+      category: ExpenseCategory.food,
+      amount: '400.00',
+      date: '2026-06-12',
+    );
+
+    final updated = repository.updatedRequests.single;
+    expect(updated.id, 'exp-1');
+    expect(updated.request.title, 'Brunch with the team');
+    expect(updated.request.category, 'FOOD');
+    expect(updated.request.amount, '400.00');
+    expect(updated.request.currency, 'THB');
+    expect(updated.request.date, '2026-06-12');
+  });
+
+  test(
+    "updateExpense defaults the date to the injected clock's today",
+    () async {
+      final (:container, :repository) = makeContainer();
+      final service = container.read(expenseServiceProvider);
+
+      await service.updateExpense(
+        id: 'exp-1',
+        title: 'Lunch',
+        category: ExpenseCategory.food,
+        amount: '120.00',
+      );
+
+      expect(repository.updatedRequests.single.request.date, '2026-06-15');
+    },
+  );
+
+  test('deleteExpense passes the id through to the repository', () async {
+    final (:container, :repository) = makeContainer();
+    final service = container.read(expenseServiceProvider);
+
+    await service.deleteExpense('exp-2');
+
+    expect(repository.deletedIds, ['exp-2']);
+  });
+
+  test('deleteExpense of an unknown id throws the typed exception', () async {
+    final (:container, repository: _) = makeContainer();
+    final service = container.read(expenseServiceProvider);
+
+    expect(
+      () => service.deleteExpense('no-such-id'),
+      throwsA(isA<ExpenseNotFoundException>()),
+    );
+  });
 }

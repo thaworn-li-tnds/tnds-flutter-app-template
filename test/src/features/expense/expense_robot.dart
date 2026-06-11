@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tnds_flutter_app/src/common_widgets/common_error_widget.dart';
 import 'package:tnds_flutter_app/src/features/expense/data/budget_repository.dart';
@@ -7,6 +9,7 @@ import 'package:tnds_flutter_app/src/features/expense/data/fake/fake_expense_rep
 import 'package:tnds_flutter_app/src/features/expense/domain/expense_category.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/budget_overview_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/create_expense_screen.dart';
+import 'package:tnds_flutter_app/src/features/expense/presentation/edit_expense_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/expense_detail_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/presentation/expense_list_screen.dart';
 import 'package:tnds_flutter_app/src/features/expense/router/expense_router.dart';
@@ -54,6 +57,18 @@ class ExpenseRobot {
         ],
       );
 
+  Future<void> pumpEditExpenseScreen(
+    String expenseId, {
+    FakeExpenseRepository? repository,
+  }) => robot.pumpTestWidget(
+    EditExpenseScreen(expenseId: expenseId),
+    overrideRepos: [
+      expenseRepositoryProvider.overrideWith(
+        (ref) => repository ?? FakeExpenseRepository(),
+      ),
+    ],
+  );
+
   /// The budget screen joins TWO endpoints, so both fakes are injected.
   Future<void> pumpBudgetOverviewScreen({
     FakeBudgetRepository? budgetRepository,
@@ -96,6 +111,25 @@ class ExpenseRobot {
       robot.expectLabelText(key, value);
 
   void expectInlineCreateError() => robot.expectKey('create_expense_error');
+
+  void expectInlineEditError() => robot.expectKey('edit_expense_error');
+
+  void expectInlineDeleteError() => robot.expectKey('delete_expense_error');
+
+  void expectDeleteDialog() => robot.expectKey('delete_expense_dialog');
+
+  void expectNoDeleteDialog() => robot.expectKey('delete_expense_dialog', n: 0);
+
+  /// Asserts a form field is prefilled with [value] (edit screen seeds inputs
+  /// from the loaded expense).
+  void expectFieldText(String key, String value) {
+    final finder = find.byKey(Key(key));
+    expect(finder, findsOneWidget);
+    final TextField field = robot.tester.widget<TextField>(
+      find.descendant(of: finder, matching: find.byType(TextField)),
+    );
+    expect(field.controller?.text, value);
+  }
 
   void expectValidationMessage(String message) => robot.expectText(message);
 
@@ -146,6 +180,19 @@ class ExpenseRobot {
 
   Future<void> tapSave() => robot.clickWidgetByKey('save_expense_button');
 
+  /// The detail screen's app-bar action (edit) — CommonAppBar's right icon.
+  Future<void> tapEditAction() => robot.clickWidgetByKey('app_bar_right_icon');
+
+  Future<void> tapUpdate() => robot.clickWidgetByKey('update_expense_button');
+
+  Future<void> tapDelete() => robot.clickWidgetByKey('delete_expense_button');
+
+  Future<void> confirmDelete() =>
+      robot.clickWidgetByKey('delete_expense_confirm');
+
+  Future<void> cancelDelete() =>
+      robot.clickWidgetByKey('delete_expense_cancel');
+
   /// The list screen's app-bar action (CommonAppBar's built-in right icon).
   Future<void> tapBudgetEntry() => robot.clickWidgetByKey('app_bar_right_icon');
 
@@ -154,6 +201,15 @@ class ExpenseRobot {
   void verifyPushedDetail(String id) => verify(
     () => robot.goRouter.pushNamed(
       ExpenseRouter.expenseDetail.name,
+      pathParameters: any(named: 'pathParameters'),
+      queryParameters: {'id': id},
+      extra: any(named: 'extra'),
+    ),
+  ).called(1);
+
+  void verifyPushedEdit(String id) => verify(
+    () => robot.goRouter.pushNamed(
+      ExpenseRouter.editExpense.name,
       pathParameters: any(named: 'pathParameters'),
       queryParameters: {'id': id},
       extra: any(named: 'extra'),
