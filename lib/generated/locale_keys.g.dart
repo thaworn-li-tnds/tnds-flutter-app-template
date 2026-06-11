@@ -12,8 +12,7 @@ abstract class LocaleKeys {
   static const expense_budget_over_by = 'expense.budget.over_by';
   static const expense_budget_remaining = 'expense.budget.remaining';
   static const expense_budget_title = 'expense.budget.title';
-  static const expense_category_entertainment =
-      'expense.category.entertainment';
+  static const expense_category_entertainment = 'expense.category.entertainment';
   static const expense_category_food = 'expense.category.food';
   static const expense_category_other = 'expense.category.other';
   static const expense_category_shopping = 'expense.category.shopping';
@@ -29,15 +28,12 @@ abstract class LocaleKeys {
   static const expense_detail_category = 'expense.detail.category';
   static const expense_detail_date = 'expense.detail.date';
   static const expense_detail_delete_button = 'expense.detail.delete_button';
-  static const expense_detail_delete_confirm_message =
-      'expense.detail.delete_confirm_message';
-  static const expense_detail_delete_confirm_title =
-      'expense.detail.delete_confirm_title';
+  static const expense_detail_delete_confirm_message = 'expense.detail.delete_confirm_message';
+  static const expense_detail_delete_confirm_title = 'expense.detail.delete_confirm_title';
   static const expense_detail_title = 'expense.detail.title';
   static const expense_edit_save_button = 'expense.edit.save_button';
   static const expense_edit_title = 'expense.edit.title';
-  static const expense_error_not_found_description =
-      'expense.error.not_found_description';
+  static const expense_error_not_found_description = 'expense.error.not_found_description';
   static const expense_error_not_found_title = 'expense.error.not_found_title';
   static const expense_filter_all = 'expense.filter_all';
   static const expense_home_entry_button = 'expense.home_entry_button';
